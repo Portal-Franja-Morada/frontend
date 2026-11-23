@@ -1,0 +1,15 @@
+node_modules
+dist
+.astro
+.atl
+.env
+.env.*
+!.env.example
+.cache
+.pnpm-store
+.DS_Store
+*.log
+npm-debug.log*
+*.tsbuildinfo
+coverage
+.vercel
