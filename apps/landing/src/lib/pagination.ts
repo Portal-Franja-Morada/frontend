@@ -1,6 +1,6 @@
 import { POSTS_PAGE_LIMIT } from "./constants";
 
-export function parsePostsPage(search: string): number {
+export function parseListPage(search: string): number {
   const raw = new URLSearchParams(search).get("page");
   const page = Number.parseInt(raw ?? "1", 10);
   if (!Number.isInteger(page) || page < 1) {
@@ -9,16 +9,19 @@ export function parsePostsPage(search: string): number {
   return page;
 }
 
-export function totalPages(total: number): number {
+/** @deprecated Use parseListPage */
+export const parsePostsPage = parseListPage;
+
+export function totalListPages(total: number, pageSize: number): number {
   if (total <= 0) {
     return 0;
   }
-  return Math.ceil(total / POSTS_PAGE_LIMIT);
+  return Math.ceil(total / pageSize);
 }
 
-export function postsRange(page: number, total: number) {
-  const from = (page - 1) * POSTS_PAGE_LIMIT + 1;
-  const to = Math.min(page * POSTS_PAGE_LIMIT, total);
+export function listRange(page: number, total: number, pageSize: number) {
+  const from = (page - 1) * pageSize + 1;
+  const to = Math.min(page * pageSize, total);
   return { from, to };
 }
 
@@ -36,4 +39,12 @@ export function visiblePageNumbers(current: number, pages: number): number[] {
   }
 
   return [current - 1, current, current + 1];
+}
+
+export function totalPages(total: number): number {
+  return totalListPages(total, POSTS_PAGE_LIMIT);
+}
+
+export function postsRange(page: number, total: number) {
+  return listRange(page, total, POSTS_PAGE_LIMIT);
 }

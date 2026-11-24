@@ -33,3 +33,9 @@ export type PublicPostsPage = {
 export type PublicPostDetail = PublicPost & {
   cuerpo: string;
 };
+
+export type PublicEventsPage = {
+  items: PublicEvent[];
+  page: number;
+  total: number;
+};

@@ -74,7 +74,7 @@ export function FeaturedAgenda({
             </div>
 
             <a
-              href="#"
+              href="/eventos"
               className="text-sm font-bold text-franja-morada transition-opacity hover:opacity-80"
             >
               Ver todos los eventos →
