@@ -59,6 +59,15 @@ export function formatEventTimeRange(
   return `${start} a ${end} h`;
 }
 
+export function formatEventDateLong(iso: string): string {
+  return new Intl.DateTimeFormat("es-AR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: ARGENTINA_TZ,
+  }).format(new Date(iso));
+}
+
 export function formatPostDateLong(publicadoAt: string): string {
   return new Intl.DateTimeFormat("es-AR", {
     day: "numeric",

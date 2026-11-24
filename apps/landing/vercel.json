@@ -3,6 +3,10 @@
     {
       "source": "/novedades/:slug",
       "destination": "/novedades/_"
+    },
+    {
+      "source": "/eventos/:slug",
+      "destination": "/eventos/_"
     }
   ]
 }

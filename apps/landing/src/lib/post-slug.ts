@@ -1,7 +1,7 @@
 import { DETAIL_SHELL_SLUG } from "./constants";
 
-export function parsePostSlugFromPathname(pathname: string): string | null {
-  const match = /^\/novedades\/([^/]+)\/?$/.exec(pathname);
+function parseDetailSlug(pathname: string, section: string): string | null {
+  const match = new RegExp(`^/${section}/([^/]+)/?$`).exec(pathname);
   if (!match) {
     return null;
   }
@@ -12,4 +12,12 @@ export function parsePostSlugFromPathname(pathname: string): string | null {
   }
 
   return slug;
+}
+
+export function parsePostSlugFromPathname(pathname: string): string | null {
+  return parseDetailSlug(pathname, "novedades");
+}
+
+export function parseEventSlugFromPathname(pathname: string): string | null {
+  return parseDetailSlug(pathname, "eventos");
 }
