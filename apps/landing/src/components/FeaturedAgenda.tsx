@@ -1,19 +1,18 @@
 import { EmptyState } from "@franja/ui/components/empty-state";
 import { ErrorState } from "@franja/ui/components/error-state";
 import { LoadingState } from "@franja/ui/components/loading-state";
-import { featuredEvents } from "../data/mock";
 import type { DataState } from "../lib/data-state";
-import { retryDataLoad } from "../lib/data-state";
+import type { AgendaEvent } from "../types/view";
 import { GoldCorner } from "./GoldCorner";
 import { Section } from "./Section";
 
-type Event = (typeof featuredEvents)[number];
-
 type FeaturedAgendaProps = {
-  dataState?: DataState;
+  dataState: DataState;
+  events: AgendaEvent[];
+  onRetry: () => void;
 };
 
-function EventDate({ day, month }: Pick<Event, "day" | "month">) {
+function EventDate({ day, month }: Pick<AgendaEvent, "day" | "month">) {
   return (
     <div className="flex min-w-[72px] flex-col items-center rounded-lg bg-franja-rose px-3 py-2">
       <span className="text-section leading-section font-bold text-franja-morada">
@@ -24,7 +23,7 @@ function EventDate({ day, month }: Pick<Event, "day" | "month">) {
   );
 }
 
-function EventCard({ event }: { event: Event }) {
+function EventCard({ event }: { event: AgendaEvent }) {
   return (
     <article className="flex items-start gap-4 rounded-xl border border-franja-border bg-white p-5">
       <EventDate day={event.day} month={event.month} />
@@ -44,7 +43,11 @@ function EventCard({ event }: { event: Event }) {
   );
 }
 
-export function FeaturedAgenda({ dataState = "ok" }: FeaturedAgendaProps) {
+export function FeaturedAgenda({
+  dataState,
+  events,
+  onRetry,
+}: FeaturedAgendaProps) {
   return (
     <Section id="eventos">
       <div className="flex flex-col gap-6">
@@ -60,13 +63,13 @@ export function FeaturedAgenda({ dataState = "ok" }: FeaturedAgendaProps) {
         {dataState === "vacio" ? (
           <EmptyState message="Todavía no hay eventos cargados" />
         ) : null}
-        {dataState === "error" ? <ErrorState onRetry={retryDataLoad} /> : null}
+        {dataState === "error" ? <ErrorState onRetry={onRetry} /> : null}
 
         {dataState === "ok" ? (
           <>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-              {featuredEvents.map((event) => (
-                <EventCard key={event.title} event={event} />
+              {events.map((event) => (
+                <EventCard key={event.slug} event={event} />
               ))}
             </div>
 

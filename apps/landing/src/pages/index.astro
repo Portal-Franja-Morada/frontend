@@ -1,15 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { LandingPage } from "../components/LandingPage";
-import type { DataState } from "../lib/data-state";
-
-const rawEstado = Astro.url.searchParams.get("estado");
-const dataState: DataState =
-  rawEstado === "cargando" || rawEstado === "vacio" || rawEstado === "error"
-    ? rawEstado
-    : "ok";
 ---
 
 <Layout title="Franja Morada · Económicas | Portal de estudiantes">
-  <LandingPage client:load dataState={dataState} />
+  <LandingPage client:load />
 </Layout>
