@@ -39,6 +39,26 @@ export function formatNewsCategory(publicadoAt: string): string {
     .toUpperCase();
 }
 
+export function formatEventMonthYear(iso: string): string {
+  const year = new Intl.DateTimeFormat("es-AR", {
+    year: "numeric",
+    timeZone: ARGENTINA_TZ,
+  }).format(new Date(iso));
+  return `${formatEventMonth(iso)} ${year}`;
+}
+
+export function formatEventTimeRange(
+  inicio: string,
+  fin: string | null,
+): string {
+  const start = formatEventTime(inicio).replace(/ h$/, "");
+  if (!fin) {
+    return `${start} h`;
+  }
+  const end = formatEventTime(fin).replace(/ h$/, "");
+  return `${start} a ${end} h`;
+}
+
 export function formatPostDateLong(publicadoAt: string): string {
   return new Intl.DateTimeFormat("es-AR", {
     day: "numeric",

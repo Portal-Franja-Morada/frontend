@@ -17,6 +17,17 @@ export type NewsItem = {
   href: string;
 };
 
+export type EventListItem = {
+  slug: string;
+  day: string;
+  monthYear: string;
+  title: string;
+  time: string;
+  location: string;
+  href: string;
+  inicio: string;
+};
+
 export type HomeViewModel = {
   events: AgendaEvent[];
   news: NewsItem[];
