@@ -23,3 +23,9 @@ export type HomeResponse = {
   novedades: PublicPost[];
   eventos: PublicEvent[];
 };
+
+export type PublicPostsPage = {
+  items: PublicPost[];
+  page: number;
+  total: number;
+};
