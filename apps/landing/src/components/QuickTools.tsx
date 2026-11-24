@@ -1,4 +1,4 @@
-import { quickTools } from "../data/mock";
+import { quickTools } from "../data/site";
 import { Section } from "./Section";
 
 export function QuickTools() {

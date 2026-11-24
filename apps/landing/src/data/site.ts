@@ -1,0 +1,21 @@
+export const navLinks = [
+  { label: "Inicio", href: "#", active: true },
+  { label: "Novedades", href: "#" },
+  { label: "Eventos", href: "#" },
+  { label: "Beneficios", href: "#" },
+] as const;
+
+export const quickTools = [
+  { title: "Apuntes", description: "Material para estudiar →", href: "#" },
+  { title: "Tu calendario", description: "Organizá la cursada →", href: "#" },
+  {
+    title: "Planes de estudio",
+    description: "Conocé tu recorrido →",
+    href: "#",
+  },
+  {
+    title: "Comunidad Morada",
+    description: "Descubrí beneficios →",
+    href: "#",
+  },
+] as const;

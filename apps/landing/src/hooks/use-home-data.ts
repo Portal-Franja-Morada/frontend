@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { DataState } from "../lib/data-state";
 import { readPreviewDataState, sectionDataState } from "../lib/data-state";
 import { fetchPublicHome, getApiBaseUrl } from "../lib/fetch-home";
-import { mapHomeResponse, mapMockHome } from "../lib/map-home";
+import { mapHomeResponse } from "../lib/map-home";
 import type { AgendaEvent, NewsItem } from "../types/view";
 
 type FetchStatus = "idle" | "loading" | "error" | "ok";
@@ -23,6 +23,9 @@ const emptyHomeData = (preview: DataState): HomeData => ({
   retry: () => undefined,
 });
 
+const MISSING_API_URL_MESSAGE =
+  "[@franja/landing] Falta PUBLIC_API_URL. Definila en apps/landing/.env para cargar datos del backend.";
+
 export function useHomeData(): HomeData {
   const apiBaseUrl = getApiBaseUrl();
   const previewState = readPreviewDataState();
@@ -30,16 +33,16 @@ export function useHomeData(): HomeData {
   const [events, setEvents] = useState<AgendaEvent[]>([]);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [fetchStatus, setFetchStatus] = useState<FetchStatus>(
-    apiBaseUrl ? "loading" : "ok",
+    apiBaseUrl ? "loading" : "error",
   );
 
   const load = useCallback(async () => {
     const baseUrl = getApiBaseUrl();
     if (!baseUrl) {
-      const mock = mapMockHome();
-      setEvents(mock.events);
-      setNews(mock.news);
-      setFetchStatus("ok");
+      console.warn(MISSING_API_URL_MESSAGE);
+      setEvents([]);
+      setNews([]);
+      setFetchStatus("error");
       return;
     }
 
@@ -74,17 +77,6 @@ export function useHomeData(): HomeData {
     return {
       ...emptyHomeData(previewState),
       retry: previewState === "error" ? clearPreviewAndReload : load,
-    };
-  }
-
-  if (!apiBaseUrl) {
-    const mock = mapMockHome();
-    return {
-      events: mock.events,
-      news: mock.news,
-      eventsState: "ok",
-      newsState: "ok",
-      retry: load,
     };
   }
 
