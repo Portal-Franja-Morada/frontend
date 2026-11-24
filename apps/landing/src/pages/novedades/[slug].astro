@@ -1,0 +1,13 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { NewsDetailPage } from "../../components/NewsDetailPage";
+import { DETAIL_SHELL_SLUG } from "../../lib/constants";
+
+export function getStaticPaths() {
+  return [{ params: { slug: DETAIL_SHELL_SLUG } }];
+}
+---
+
+<Layout title="Novedad | Franja Morada · Económicas">
+  <NewsDetailPage client:load />
+</Layout>

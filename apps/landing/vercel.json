@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/novedades/:slug",
+      "destination": "/novedades/_"
+    }
+  ]
+}
