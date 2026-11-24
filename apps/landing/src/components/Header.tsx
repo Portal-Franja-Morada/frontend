@@ -1,7 +1,7 @@
 import { buttonVariants } from "@franja/ui/components/button";
 import { cn } from "@franja/ui/lib/utils";
 import { useState } from "react";
-import { navLinks } from "../data/mock";
+import { navLinks } from "../data/site";
 
 export function Header() {
   const [open, setOpen] = useState(false);
