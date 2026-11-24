@@ -1,12 +1,8 @@
 import type { HomeResponse } from "../types/content";
-import type { AgendaEvent, HomeViewModel, NewsItem } from "../types/view";
-import {
-  formatEventDay,
-  formatEventMonth,
-  formatEventTime,
-  formatNewsCategory,
-} from "./dates";
-import { DEFAULT_NEWS_IMAGE, HOME_PREVIEW_LIMIT } from "./constants";
+import type { AgendaEvent, HomeViewModel } from "../types/view";
+import { formatEventDay, formatEventMonth, formatEventTime } from "./dates";
+import { HOME_PREVIEW_LIMIT } from "./constants";
+import { mapPublicPostToNewsItem } from "./map-post";
 
 export function mapHomeResponse(data: HomeResponse): HomeViewModel {
   return {
@@ -27,13 +23,6 @@ function mapEvent(event: HomeResponse["eventos"][number]): AgendaEvent {
   };
 }
 
-function mapPost(post: HomeResponse["novedades"][number]): NewsItem {
-  return {
-    slug: post.slug,
-    category: formatNewsCategory(post.publicadoAt),
-    title: post.titulo,
-    image: post.imagenUrl ?? DEFAULT_NEWS_IMAGE,
-    imageAlt: post.titulo,
-    href: "#",
-  };
+function mapPost(post: HomeResponse["novedades"][number]) {
+  return mapPublicPostToNewsItem(post);
 }

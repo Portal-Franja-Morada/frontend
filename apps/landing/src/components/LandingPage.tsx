@@ -12,7 +12,7 @@ export function LandingPage() {
 
   return (
     <>
-      <Header />
+      <Header currentPath="/" />
       <main>
         <Hero />
         <QuickTools />

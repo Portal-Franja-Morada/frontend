@@ -3,13 +3,29 @@ import { cn } from "@franja/ui/lib/utils";
 import { useState } from "react";
 import { navLinks } from "../data/site";
 
-export function Header() {
+type HeaderProps = {
+  currentPath?: string;
+};
+
+function isNavActive(currentPath: string, href: string): boolean {
+  if (href === "/") {
+    return currentPath === "/" || currentPath === "";
+  }
+
+  if (href === "#" || href === "") {
+    return false;
+  }
+
+  return currentPath === href || currentPath.startsWith(`${href}/`);
+}
+
+export function Header({ currentPath = "/" }: HeaderProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="border-b border-franja-border bg-white px-5 py-5.5 lg:px-20 lg:py-[22px]">
       <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-6">
-        <a href="#" className="shrink-0">
+        <a href="/" className="shrink-0">
           <img
             src="/logo.png"
             alt="Franja Morada · Económicas"
@@ -28,7 +44,7 @@ export function Header() {
               key={link.label}
               href={link.href}
               className={`text-sm font-bold transition-colors ${
-                "active" in link && link.active
+                isNavActive(currentPath, link.href)
                   ? "text-franja-morada"
                   : "text-franja-dark hover:text-franja-morada"
               }`}
@@ -70,7 +86,7 @@ export function Header() {
               key={link.label}
               href={link.href}
               className={`text-sm font-bold ${
-                "active" in link && link.active
+                isNavActive(currentPath, link.href)
                   ? "text-franja-morada"
                   : "text-franja-dark"
               }`}

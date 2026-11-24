@@ -5,6 +5,7 @@ import { LoadingState } from "@franja/ui/components/loading-state";
 import { cn } from "@franja/ui/lib/utils";
 import type { DataState } from "../lib/data-state";
 import type { NewsItem } from "../types/view";
+import { NewsCard } from "./NewsCard";
 import { Section } from "./Section";
 
 type LatestNewsProps = {
@@ -36,38 +37,12 @@ export function LatestNews({ dataState, news, onRetry }: LatestNewsProps) {
           <>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               {news.map((item) => (
-                <article
-                  key={item.slug}
-                  className="flex flex-col overflow-hidden rounded-xl border border-franja-border bg-white"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.imageAlt}
-                    className="h-[190px] w-full object-cover lg:h-[200px]"
-                    width={409}
-                    height={200}
-                    loading="lazy"
-                  />
-                  <div className="flex flex-col gap-3 p-5">
-                    <p className="text-xs font-bold text-franja-morada">
-                      {item.category}
-                    </p>
-                    <h3 className="text-card-title font-bold text-franja-dark">
-                      {item.title}
-                    </h3>
-                    <a
-                      href={item.href}
-                      className="text-sm font-bold text-franja-morada transition-opacity hover:opacity-80"
-                    >
-                      Leé la nota →
-                    </a>
-                  </div>
-                </article>
+                <NewsCard key={item.slug} item={item} />
               ))}
             </div>
 
             <a
-              href="#"
+              href="/novedades"
               className={cn(
                 buttonVariants({ variant: "default" }),
                 "h-12 w-fit rounded-lg bg-franja-gold px-5.5 text-sm font-bold text-franja-morada hover:bg-franja-gold/90",
