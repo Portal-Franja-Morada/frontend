@@ -58,10 +58,7 @@ export function NewsPagination({
           {page < pages ? (
             <a
               href={`/novedades?page=${page + 1}`}
-              className={cn(
-                pageLinkClass,
-                "bg-franja-gold text-franja-morada",
-              )}
+              className={cn(pageLinkClass, "bg-franja-gold text-franja-morada")}
             >
               Siguiente →
             </a>
