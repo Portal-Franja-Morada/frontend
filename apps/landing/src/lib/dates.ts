@@ -38,3 +38,14 @@ export function formatNewsCategory(publicadoAt: string): string {
     .replace(/\./g, "")
     .toUpperCase();
 }
+
+export function formatPostDateLong(publicadoAt: string): string {
+  return new Intl.DateTimeFormat("es-AR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: ARGENTINA_TZ,
+  })
+    .format(new Date(publicadoAt))
+    .toUpperCase();
+}

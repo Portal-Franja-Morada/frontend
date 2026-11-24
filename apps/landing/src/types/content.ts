@@ -29,3 +29,7 @@ export type PublicPostsPage = {
   page: number;
   total: number;
 };
+
+export type PublicPostDetail = PublicPost & {
+  cuerpo: string;
+};
