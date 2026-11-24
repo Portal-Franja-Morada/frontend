@@ -1,12 +1,15 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Button } from "@franja/ui/components/button";
+import { LandingPage } from "../components/LandingPage";
+import type { DataState } from "../lib/data-state";
+
+const rawEstado = Astro.url.searchParams.get("estado");
+const dataState: DataState =
+  rawEstado === "cargando" || rawEstado === "vacio" || rawEstado === "error"
+    ? rawEstado
+    : "ok";
 ---
 
-<Layout>
-  <main class="mx-auto flex min-h-screen max-w-3xl flex-col items-start justify-center gap-6 px-6">
-    <p class="text-sm text-muted-foreground">Franja Morada · FCE UNNE</p>
-    <h1 class="text-4xl font-semibold tracking-tight">Portal de estudiantes</h1>
-    <Button>Entrar</Button>
-  </main>
+<Layout title="Franja Morada · Económicas | Portal de estudiantes">
+  <LandingPage client:load dataState={dataState} />
 </Layout>

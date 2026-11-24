@@ -1,0 +1,5 @@
+@import "@franja/ui/globals.css";
+@source "../components";
+@source "../pages";
+@source "../layouts";
+@source "../../../../packages/ui/src/components";
