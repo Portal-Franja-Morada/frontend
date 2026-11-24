@@ -1,0 +1,13 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { EventDetailPage } from "../../components/EventDetailPage";
+import { DETAIL_SHELL_SLUG } from "../../lib/constants";
+
+export function getStaticPaths() {
+  return [{ params: { slug: DETAIL_SHELL_SLUG } }];
+}
+---
+
+<Layout title="Evento | Franja Morada · Económicas">
+  <EventDetailPage client:load />
+</Layout>

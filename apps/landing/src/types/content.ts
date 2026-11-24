@@ -39,3 +39,7 @@ export type PublicEventsPage = {
   page: number;
   total: number;
 };
+
+export type PublicEventDetail = PublicEvent & {
+  googleCalendarUrl: string;
+};
