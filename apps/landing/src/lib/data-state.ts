@@ -1,8 +1,8 @@
 export type DataState = "ok" | "cargando" | "vacio" | "error";
 
-export function readDataStateFromUrl(): DataState {
-  if (typeof window === "undefined") {
-    return "ok";
+export function readPreviewDataState(): DataState | null {
+  if (!import.meta.env.DEV || typeof window === "undefined") {
+    return null;
   }
 
   const estado = new URLSearchParams(window.location.search).get("estado");
@@ -10,11 +10,21 @@ export function readDataStateFromUrl(): DataState {
     return estado;
   }
 
-  return "ok";
+  return null;
 }
 
-export function retryDataLoad() {
-  const url = new URL(window.location.href);
-  url.searchParams.delete("estado");
-  window.location.href = url.toString();
+export function sectionDataState(
+  fetchState: "idle" | "loading" | "error" | "ok",
+  itemCount: number,
+): DataState {
+  if (fetchState === "loading") {
+    return "cargando";
+  }
+  if (fetchState === "error") {
+    return "error";
+  }
+  if (itemCount === 0) {
+    return "vacio";
+  }
+  return "ok";
 }

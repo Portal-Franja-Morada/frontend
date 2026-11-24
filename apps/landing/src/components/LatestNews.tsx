@@ -3,16 +3,17 @@ import { EmptyState } from "@franja/ui/components/empty-state";
 import { ErrorState } from "@franja/ui/components/error-state";
 import { LoadingState } from "@franja/ui/components/loading-state";
 import { cn } from "@franja/ui/lib/utils";
-import { latestNews } from "../data/mock";
 import type { DataState } from "../lib/data-state";
-import { retryDataLoad } from "../lib/data-state";
+import type { NewsItem } from "../types/view";
 import { Section } from "./Section";
 
 type LatestNewsProps = {
-  dataState?: DataState;
+  dataState: DataState;
+  news: NewsItem[];
+  onRetry: () => void;
 };
 
-export function LatestNews({ dataState = "ok" }: LatestNewsProps) {
+export function LatestNews({ dataState, news, onRetry }: LatestNewsProps) {
   return (
     <Section surface id="novedades">
       <div className="flex flex-col gap-6">
@@ -29,14 +30,14 @@ export function LatestNews({ dataState = "ok" }: LatestNewsProps) {
         {dataState === "vacio" ? (
           <EmptyState message="Novedades: todavía no hay publicaciones." />
         ) : null}
-        {dataState === "error" ? <ErrorState onRetry={retryDataLoad} /> : null}
+        {dataState === "error" ? <ErrorState onRetry={onRetry} /> : null}
 
         {dataState === "ok" ? (
           <>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              {latestNews.map((item) => (
+              {news.map((item) => (
                 <article
-                  key={item.title}
+                  key={item.slug}
                   className="flex flex-col overflow-hidden rounded-xl border border-franja-border bg-white"
                 >
                   <img
