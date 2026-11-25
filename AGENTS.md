@@ -60,6 +60,13 @@ pnpm typecheck      # astro check en la landing y tsc --noEmit en @franja/ui
 
 No commitear secretos, `.env` ni prompts o briefs. En la documentación, solo nombres de variables, nunca valores.
 
+## Trabajo seguro
+
+- Git: no commitear directo en `main`. Push solo con aprobación. Nunca `push --force`, `reset --hard`, borrar ramas ni reescribir historial.
+- Dependencias: preguntar antes de agregar, quitar o actualizar paquetes. El lockfile solo cambia con `pnpm`. No instalar nada global ni a nivel sistema.
+- Secretos: no leer ni mostrar el contenido de `.env` salvo que se pida. Crearlo o editarlo solo con aprobación.
+- Alcance: no tocar el repo padre de esta carpeta ni el del backend.
+
 ## Nota para cuando exista la app
 
 La cookie de login del backend es `SameSite=Lax`. En producción, la app y la API tienen que compartir dominio raíz (`app` y `api` bajo el mismo sitio). En local, la app va a usar el proxy de Vite. La landing de ahora es pública y no participa de esa sesión.
