@@ -1,0 +1,102 @@
+---
+// Intro de la home (prototipo local). Va primero en el <body>: el script
+// inline corre antes de que se dibuje el contenido de la página y decide si
+// el overlay se muestra. Por defecto el overlay está oculto (display: none),
+// así que sin JS, con reduced-motion o sin WebGL2 no llega a verse ni un
+// cuadro. Se muestra en cada carga de la home.
+---
+
+<div id="franja-intro" class="intro" aria-hidden="true">
+  <canvas class="intro-canvas"></canvas>
+  <img
+    class="intro-logo"
+    src="/logo.png"
+    alt=""
+    width="440"
+    height="64"
+    decoding="async"
+  />
+</div>
+
+<script is:inline>
+  (function () {
+    const el = document.getElementById("franja-intro");
+    if (!el) return;
+    let show;
+    try {
+      const reduce = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      show = !reduce && "WebGL2RenderingContext" in window;
+    } catch {
+      show = false;
+    }
+    if (show) {
+      el.setAttribute("data-t0", String(performance.now()));
+      el.setAttribute("data-on", "");
+    } else {
+      el.remove();
+    }
+  })();
+</script>
+
+<script>
+  import { runIntro } from "../lib/intro-sphere";
+
+  const el = document.getElementById("franja-intro");
+  if (el?.hasAttribute("data-on")) runIntro(el);
+</script>
+
+<style>
+  .intro {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    /* --color-franja-surface */
+    background: #faf8f6;
+    transition: opacity 600ms ease;
+  }
+
+  .intro[data-on] {
+    display: block;
+    /* Red de seguridad: si el JS falla, a los 8 s el overlay se oculta y deja
+       de capturar clics. La intro normal saca el nodo antes (6 s, tope 7 s). */
+    animation: intro-failsafe 1ms linear 8s forwards;
+  }
+
+  .intro[data-fading] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .intro-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .intro-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(560px, 86vw);
+    height: auto;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 650ms ease;
+  }
+
+  .intro-logo[data-visible] {
+    opacity: 1;
+  }
+
+  @keyframes intro-failsafe {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+</style>
