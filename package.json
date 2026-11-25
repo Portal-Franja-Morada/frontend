@@ -6,7 +6,7 @@
     "node": ">=22.23.4"
   },
   "scripts": {
-    "dev": "pnpm --filter @franja/landing dev",
+    "dev": "pnpm -r --parallel --filter @franja/landing --filter @franja/admin dev",
     "build": "pnpm -r --if-present build",
     "lint": "eslint .",
     "format": "prettier --write .",
