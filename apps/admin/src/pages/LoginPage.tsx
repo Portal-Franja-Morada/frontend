@@ -5,10 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { AdminFooter } from "../components/AdminFooter";
 import { AdminHeader } from "../components/AdminHeader";
 import { ApiError, isNetworkError } from "../lib/api";
+import { authInputClassName } from "../lib/auth-form";
 import { useAuth } from "../hooks/use-auth";
-
-const inputClassName =
-  "h-14 w-full rounded-lg border border-franja-border bg-white px-4 text-base text-franja-dark outline-none transition-colors placeholder:text-franja-muted focus:border-franja-morada";
 
 type LoginErrorKind = "credentials" | "network" | "admin" | "config";
 
@@ -130,7 +128,7 @@ export function LoginPage() {
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="nombre@email.com"
-                  className={inputClassName}
+                  className={authInputClassName}
                   disabled={loading}
                 />
               </div>
@@ -161,7 +159,7 @@ export function LoginPage() {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Tu contraseña"
-                  className={inputClassName}
+                  className={authInputClassName}
                   disabled={loading}
                 />
               </div>
