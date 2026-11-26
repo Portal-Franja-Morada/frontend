@@ -39,9 +39,29 @@ function isApiErrorBody(data: unknown): data is ApiErrorBody {
   );
 }
 
-async function readApiError(response: Response): Promise<ApiError> {
+/** Formato real del backend: `{ error: { code, message } }`. */
+type NestedApiErrorBody = {
+  error: { code: string; message: string };
+};
+
+function isNestedApiErrorBody(data: unknown): data is NestedApiErrorBody {
+  if (!data || typeof data !== "object") {
+    return false;
+  }
+  const error = (data as Record<string, unknown>).error;
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+  const record = error as Record<string, unknown>;
+  return typeof record.code === "string" && typeof record.message === "string";
+}
+
+export async function readApiError(response: Response): Promise<ApiError> {
   try {
     const data: unknown = await response.json();
+    if (isNestedApiErrorBody(data)) {
+      return new ApiError(response.status, data.error.code, data.error.message);
+    }
     if (isApiErrorBody(data)) {
       return new ApiError(data.statusCode, data.code, data.message);
     }
@@ -58,7 +78,7 @@ export function isNetworkError(error: unknown): boolean {
   return error instanceof TypeError;
 }
 
-async function apiFetch(
+export async function apiFetch(
   path: string,
   options: RequestInit = {},
 ): Promise<Response> {
