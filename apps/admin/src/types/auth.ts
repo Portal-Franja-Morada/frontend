@@ -5,6 +5,9 @@ export type MeResponse = {
   email: string;
   rol: Role;
   emailVerificado: boolean;
+  perfil?: {
+    nombreParaMostrar: string;
+  } | null;
 };
 
 export type ApiErrorBody = {

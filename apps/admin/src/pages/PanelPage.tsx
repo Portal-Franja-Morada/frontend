@@ -1,45 +1,24 @@
-import { Button } from "@franja/ui/components/button";
+import { AdminLayout } from "../components/AdminLayout";
 import { useAuth } from "../hooks/use-auth";
-import { useNavigate } from "react-router-dom";
+import { adminDisplayName } from "../lib/user-display";
 
 export function PanelPage() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login", { replace: true });
-  };
+  const { user } = useAuth();
 
   return (
-    <div className="flex min-h-screen flex-col bg-franja-surface">
-      <header className="border-b border-franja-border bg-white px-5 py-5 lg:px-20">
-        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-4">
-          <img
-            src="/logo.png"
-            alt="Franja Morada · Económicas"
-            className="h-8 w-auto"
-            width={220}
-            height={32}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => void handleLogout()}
-          >
-            Cerrar sesión
-          </Button>
-        </div>
-      </header>
-
-      <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col justify-center px-5 py-16">
+    <AdminLayout>
+      <main className="flex flex-1 flex-col gap-6 px-5 py-8 lg:px-10 lg:py-10">
+        <nav aria-label="Recorrido" className="text-[13px] text-franja-muted">
+          Administración / Resumen
+        </nav>
         <h1 className="text-[26px] font-bold text-franja-dark lg:text-[36px]">
-          Panel
+          Panel de gestión
         </h1>
-        <p className="mt-2 text-base text-franja-muted">
-          Sesión de administración{user ? ` · ${user.email}` : ""}.
+        <p className="text-base text-franja-muted">
+          Sesión de administración
+          {user ? ` · ${adminDisplayName(user)}` : ""}.
         </p>
       </main>
-    </div>
+    </AdminLayout>
   );
 }
