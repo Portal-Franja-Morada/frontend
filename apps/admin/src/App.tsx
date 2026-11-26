@@ -7,6 +7,7 @@ import { EventosPage } from "./pages/EventosPage";
 import { NovedadEditorPage } from "./pages/NovedadEditorPage";
 import { NovedadesPage } from "./pages/NovedadesPage";
 import { PanelPage } from "./pages/PanelPage";
+import { PendientesPage } from "./pages/PendientesPage";
 
 export function App() {
   return (
@@ -72,6 +73,14 @@ export function App() {
         element={
           <ProtectedRoute>
             <EventoEditorPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pendientes"
+        element={
+          <ProtectedRoute>
+            <PendientesPage />
           </ProtectedRoute>
         }
       />
