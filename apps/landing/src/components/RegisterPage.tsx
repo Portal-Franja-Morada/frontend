@@ -493,9 +493,12 @@ function DuplicateEmailPanel({ email }: { email: string }) {
         >
           Ingresar
         </a>
-        <span className="flex h-[50px] w-full items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada">
+        <a
+          href="/recuperar-contrasena"
+          className="flex h-[50px] w-full items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada"
+        >
           Recuperar contraseña
-        </span>
+        </a>
       </div>
     </div>
   );
