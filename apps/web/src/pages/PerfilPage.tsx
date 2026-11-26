@@ -265,9 +265,12 @@ function CareersSection({
         El plan se asigna al importar el PDF del plan del SIU.
       </p>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-        <span className="flex h-[50px] flex-1 items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada">
+        <Link
+          to="/mis-carreras"
+          className="flex h-[50px] flex-1 items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada"
+        >
           Editar
-        </span>
+        </Link>
         <Link
           to="/importar-siu"
           className="flex h-[50px] flex-1 items-center justify-center rounded-lg bg-franja-morada text-sm font-bold text-white"
