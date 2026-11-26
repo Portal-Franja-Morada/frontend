@@ -116,8 +116,7 @@ export function buildYearGroups(materias: MateriaPlan[]): YearGroup[] {
 export function defaultSelection(careers: CareerItem[]) {
   const career = careers[0];
   if (!career) return null;
-  const plan =
-    career.planes.find((p) => p.vigente) ?? career.planes[0] ?? null;
+  const plan = career.planes.find((p) => p.vigente) ?? career.planes[0] ?? null;
   if (!plan) return null;
   return { carrera: career.slug, anio: plan.anio };
 }
@@ -132,6 +131,7 @@ export function selectionFromUrl(
   const anio = Number(anioRaw);
   if (!Number.isFinite(anio)) return defaultSelection(careers);
   const career = careers.find((c) => c.slug === slug);
-  if (!career?.planes.some((p) => p.anio === anio)) return defaultSelection(careers);
+  if (!career?.planes.some((p) => p.anio === anio))
+    return defaultSelection(careers);
   return { carrera: slug, anio };
 }
