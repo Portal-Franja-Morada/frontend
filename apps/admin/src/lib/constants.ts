@@ -1,4 +1,6 @@
 export const FETCH_TIMEOUT_MS = 10_000;
+export const DEFAULT_NEWS_IMAGE = "/news-default.png";
+export const ADMIN_LIST_FETCH_LIMIT = 50;
 export const ADMIN_POSTS_PAGE_LIMIT = 5;
 export const SEARCH_DEBOUNCE_MS = 300;
 

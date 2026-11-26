@@ -126,6 +126,7 @@ export function NovedadesPage() {
                       <td className="px-5 py-4">
                         <Link
                           to={`/novedades/${post.id}/editar`}
+                          state={{ post }}
                           className="text-sm font-bold text-franja-morada"
                         >
                           Editar
@@ -154,6 +155,7 @@ export function NovedadesPage() {
                   </div>
                   <Link
                     to={`/novedades/${post.id}/editar`}
+                    state={{ post }}
                     className="text-sm font-bold text-franja-morada"
                   >
                     Editar
