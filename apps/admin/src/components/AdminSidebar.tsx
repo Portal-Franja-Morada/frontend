@@ -7,7 +7,7 @@ const sidebarItems = [
   { label: "Resumen", to: "/" },
   { label: "Novedades", to: "/novedades" },
   { label: "Eventos", to: "/eventos" },
-  { label: "Pendientes", to: null },
+  { label: "Pendientes", to: "/pendientes" },
   { label: "Importar padrón", to: null },
 ] as const;
 
