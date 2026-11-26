@@ -4,6 +4,7 @@ import { ImportarSiuPage } from "./pages/ImportarSiuPage";
 import { HistorialPage } from "./pages/HistorialPage";
 import { MisCarrerasPage } from "./pages/MisCarrerasPage";
 import { MapaCurricularPage } from "./pages/MapaCurricularPage";
+import { MisDatosPage } from "./pages/MisDatosPage";
 import { PerfilPage } from "./pages/PerfilPage";
 
 export function App() {
@@ -46,6 +47,14 @@ export function App() {
         element={
           <ProtectedRoute>
             <MisCarrerasPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mis-datos"
+        element={
+          <ProtectedRoute>
+            <MisDatosPage />
           </ProtectedRoute>
         }
       />

@@ -314,12 +314,12 @@ function DataAndDeletionSection() {
       <p className="mt-2 text-base text-franja-muted">
         Descargá una copia de tus datos o da de baja tu cuenta.
       </p>
-      <a
-        href="/mis-datos"
+      <Link
+        to="/mis-datos"
         className="mt-4 inline-flex text-sm font-bold text-franja-morada"
       >
         Ir a Mis datos y baja
-      </a>
+      </Link>
     </div>
   );
 }
