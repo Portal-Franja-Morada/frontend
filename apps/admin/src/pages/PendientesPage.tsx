@@ -4,8 +4,11 @@ import { LoadingState } from "@franja/ui/components/loading-state";
 import { cn } from "@franja/ui/lib/utils";
 import { AdminLayout } from "../components/AdminLayout";
 import { CorregirNombreDialog } from "../components/CorregirNombreDialog";
+import { PublishConfirmOverlay } from "../components/PostEditorOverlays";
+import { RechazarVerificacionDialog } from "../components/RechazarVerificacionDialog";
 import {
   type PendingTab,
+  type SuccessBanner,
   useAdminPendingPage,
 } from "../hooks/use-admin-pending-page";
 import { formatAdminListDate } from "../lib/dates";
@@ -59,6 +62,13 @@ export function PendientesPage() {
           />
         ) : null}
 
+        {vm.verificacionResolvedNotice ? (
+          <VerificacionResolvedNotice
+            notice={vm.verificacionResolvedNotice}
+            onDismiss={vm.dismissVerificacionResolvedNotice}
+          />
+        ) : null}
+
         {vm.dataState === "cargando" ? <LoadingState /> : null}
         {vm.dataState === "error" ? <ErrorState onRetry={vm.retry} /> : null}
         {vm.dataState === "vacio" ? (
@@ -77,7 +87,10 @@ export function PendientesPage() {
                 {vm.activeTab === "verificacion" ? (
                   <VerificacionTable
                     items={vm.data.verificacion.items}
+                    busyUserId={vm.actionUserId}
                     onCorregir={vm.openCorregir}
+                    onAprobar={vm.openVerificar}
+                    onRechazar={vm.openRechazar}
                   />
                 ) : (
                   <DiferenciasTable
@@ -114,19 +127,37 @@ export function PendientesPage() {
         onCancel={vm.closeCorregir}
       />
 
-      {vm.savedBanner ? (
-        <div className="fixed bottom-5 left-1/2 z-40 w-[min(100%-2.5rem,28rem)] -translate-x-1/2 rounded-lg border border-franja-border bg-white p-4 shadow-lg">
-          <p className="text-xs font-bold uppercase tracking-wide text-[#246448]">
-            ✓ Guardamos el nombre.
-          </p>
-          <button
-            type="button"
-            onClick={vm.dismissSavedBanner}
-            className="mt-2 text-sm font-bold text-franja-morada"
-          >
-            Cerrar
-          </button>
-        </div>
+      <RechazarVerificacionDialog
+        open={vm.rechazarOpen}
+        dni={vm.rechazarDni}
+        nombre={vm.rechazarNombre}
+        apellido={vm.rechazarApellido}
+        motivo={vm.rechazarMotivo}
+        error={vm.rechazarError}
+        submitting={vm.rechazarSubmitting}
+        onMotivoChange={vm.setRechazarMotivo}
+        onConfirm={() => void vm.confirmRechazar()}
+        onCancel={vm.closeRechazar}
+      />
+
+      {vm.verificarOpen ? (
+        <PublishConfirmOverlay
+          busy={vm.verificarSubmitting}
+          title="¿APROBÁS LA VERIFICACIÓN?"
+          message={`${vm.verificarNombre} ${vm.verificarApellido} · DNI ${formatDni(vm.verificarDni)} va a quedar verificado como estudiante.`}
+          confirmLabel="Sí, aprobar"
+          cancelLabel="Cancelar"
+          error={vm.verificarError}
+          onConfirm={() => void vm.confirmVerificar()}
+          onCancel={vm.closeVerificar}
+        />
+      ) : null}
+
+      {vm.successBanner ? (
+        <SuccessBannerToast
+          kind={vm.successBanner}
+          onDismiss={vm.dismissSuccessBanner}
+        />
       ) : null}
     </AdminLayout>
   );
@@ -183,8 +214,7 @@ function TabInfo({ tab, total }: { tab: PendingTab; total: number }) {
           <span aria-hidden="true" className="font-bold text-franja-morada">
             i
           </span>
-          Por ahora es solo para mirar: Verificar y Rechazar llegan en una etapa
-          futura.
+          Revisá cada caso y elegí aprobar o rechazar la verificación.
         </p>
       </div>
     );
@@ -200,6 +230,66 @@ function TabInfo({ tab, total }: { tab: PendingTab; total: number }) {
         </span>
         Elegí qué nombre queda. También podés corregirlo a mano.
       </p>
+    </div>
+  );
+}
+
+function SuccessBannerToast({
+  kind,
+  onDismiss,
+}: {
+  kind: SuccessBanner;
+  onDismiss: () => void;
+}) {
+  const message =
+    kind === "corregir"
+      ? "✓ Guardamos el nombre."
+      : kind === "verificar"
+        ? "✓ Verificación aprobada."
+        : "✓ Verificación rechazada.";
+
+  return (
+    <div className="fixed bottom-5 left-1/2 z-40 w-[min(100%-2.5rem,28rem)] -translate-x-1/2 rounded-lg border border-franja-border bg-white p-4 shadow-lg">
+      <p className="text-xs font-bold uppercase tracking-wide text-[#246448]">
+        {message}
+      </p>
+      <button
+        type="button"
+        onClick={onDismiss}
+        className="mt-2 text-sm font-bold text-franja-morada"
+      >
+        Cerrar
+      </button>
+    </div>
+  );
+}
+
+function VerificacionResolvedNotice({
+  notice,
+  onDismiss,
+}: {
+  notice: { dni: string; nombre: string };
+  onDismiss: () => void;
+}) {
+  return (
+    <div className="rounded-xl border border-franja-border bg-white p-4">
+      <p className="text-sm font-bold text-franja-error">
+        Esa solicitud ya fue resuelta.
+      </p>
+      <p className="mt-1 text-sm text-franja-muted">
+        Otro admin la procesó antes que vos. La quitamos de la lista.
+      </p>
+      <p className="mt-3 text-sm font-bold text-franja-dark">
+        DNI {formatDni(notice.dni)}
+      </p>
+      <p className="text-sm text-franja-muted">{notice.nombre}</p>
+      <button
+        type="button"
+        onClick={onDismiss}
+        className="mt-3 text-sm font-bold text-franja-morada"
+      >
+        Cerrar
+      </button>
     </div>
   );
 }
@@ -238,10 +328,26 @@ function ResolvedNotice({
 
 function VerificacionTable({
   items,
+  busyUserId,
   onCorregir,
+  onAprobar,
+  onRechazar,
 }: {
   items: PendingVerificacionItem[];
+  busyUserId: string | null;
   onCorregir: (
+    userId: string,
+    dni: string,
+    nombre: string,
+    apellido: string,
+  ) => void;
+  onAprobar: (
+    userId: string,
+    dni: string,
+    nombre: string,
+    apellido: string,
+  ) => void;
+  onRechazar: (
     userId: string,
     dni: string,
     nombre: string,
@@ -263,52 +369,81 @@ function VerificacionTable({
         </tr>
       </thead>
       <tbody>
-        {items.map((item) => (
-          <tr
-            key={item.userId}
-            className="border-b border-franja-border last:border-0"
-          >
-            <td className="px-3 py-4 text-franja-dark">{item.email}</td>
-            <td className="px-3 py-4 text-franja-dark">
-              {item.emailVerificado ? "SÍ" : "NO"}
-            </td>
-            <td className="px-3 py-4 text-franja-dark">{item.nombre}</td>
-            <td className="px-3 py-4 text-franja-dark">{item.apellido}</td>
-            <td className="px-3 py-4 text-franja-dark">
-              {formatDni(item.dni)}
-            </td>
-            <td className="px-3 py-4 text-franja-dark">
-              {item.carrera ?? "—"}
-            </td>
-            <td className="px-3 py-4 text-franja-muted">
-              {formatAdminListDate(item.registradoAt)}
-            </td>
-            <td className="px-3 py-4">
-              <div className="flex flex-col gap-2">
-                <button
-                  type="button"
-                  onClick={() =>
-                    onCorregir(
-                      item.userId,
-                      item.dni,
-                      item.nombre,
-                      item.apellido,
-                    )
-                  }
-                  className={actionClass}
-                >
-                  Corregir nombre
-                </button>
-                <button type="button" disabled className={actionClass}>
-                  Verificar
-                </button>
-                <button type="button" disabled className={actionClass}>
-                  Rechazar
-                </button>
-              </div>
-            </td>
-          </tr>
-        ))}
+        {items.map((item) => {
+          const busy = busyUserId === item.userId;
+
+          return (
+            <tr
+              key={item.userId}
+              className="border-b border-franja-border last:border-0"
+            >
+              <td className="px-3 py-4 text-franja-dark">{item.email}</td>
+              <td className="px-3 py-4 text-franja-dark">
+                {item.emailVerificado ? "SÍ" : "NO"}
+              </td>
+              <td className="px-3 py-4 text-franja-dark">{item.nombre}</td>
+              <td className="px-3 py-4 text-franja-dark">{item.apellido}</td>
+              <td className="px-3 py-4 text-franja-dark">
+                {formatDni(item.dni)}
+              </td>
+              <td className="px-3 py-4 text-franja-dark">
+                {item.carrera ?? "—"}
+              </td>
+              <td className="px-3 py-4 text-franja-muted">
+                {formatAdminListDate(item.registradoAt)}
+              </td>
+              <td className="px-3 py-4">
+                <div className="flex flex-col gap-2">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() =>
+                      onCorregir(
+                        item.userId,
+                        item.dni,
+                        item.nombre,
+                        item.apellido,
+                      )
+                    }
+                    className={actionClass}
+                  >
+                    Corregir nombre
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() =>
+                      onAprobar(
+                        item.userId,
+                        item.dni,
+                        item.nombre,
+                        item.apellido,
+                      )
+                    }
+                    className={actionClass}
+                  >
+                    {busy ? "Procesando…" : "Aprobar"}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() =>
+                      onRechazar(
+                        item.userId,
+                        item.dni,
+                        item.nombre,
+                        item.apellido,
+                      )
+                    }
+                    className={actionClass}
+                  >
+                    Rechazar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </>
   );

@@ -4,6 +4,8 @@ export type PendingDevState =
   | "error"
   | "diferencias"
   | "modal-corregir"
+  | "modal-rechazar"
+  | "modal-verificar"
   | "sin-cambios"
   | "guardado-ok"
   | "diferencia-resuelta";
@@ -14,6 +16,8 @@ const DEV_STATES: PendingDevState[] = [
   "error",
   "diferencias",
   "modal-corregir",
+  "modal-rechazar",
+  "modal-verificar",
   "sin-cambios",
   "guardado-ok",
   "diferencia-resuelta",
