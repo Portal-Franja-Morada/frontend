@@ -15,7 +15,7 @@ export function RegisterCta() {
           permutas y mucho más. Gratis, para estudiantes como vos.
         </p>
         <a
-          href="#"
+          href="/registro"
           className={cn(
             buttonVariants({ variant: "default" }),
             "h-12 w-fit rounded-lg bg-franja-gold px-5.5 text-sm font-bold text-franja-morada hover:bg-franja-gold/90",
