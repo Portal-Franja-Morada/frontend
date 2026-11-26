@@ -183,8 +183,8 @@ function TabInfo({ tab, total }: { tab: PendingTab; total: number }) {
           <span aria-hidden="true" className="font-bold text-franja-morada">
             i
           </span>
-          Por ahora es solo para mirar: Verificar y Rechazar llegan en una
-          etapa futura.
+          Por ahora es solo para mirar: Verificar y Rechazar llegan en una etapa
+          futura.
         </p>
       </div>
     );
@@ -355,8 +355,14 @@ function DiferenciasTable({
       </thead>
       <tbody>
         {items.map((item) => {
-          const perfil = nombreCompleto(item.perfil.nombre, item.perfil.apellido);
-          const padron = nombreCompleto(item.padron.nombre, item.padron.apellido);
+          const perfil = nombreCompleto(
+            item.perfil.nombre,
+            item.perfil.apellido,
+          );
+          const padron = nombreCompleto(
+            item.padron.nombre,
+            item.padron.apellido,
+          );
           const busy = busyUserId === item.userId;
 
           return (

@@ -72,9 +72,7 @@ export function useAdminPendingPage() {
       ? DEMO_PENDING.diferenciasPadron.items[0]!.userId
       : null,
   );
-  const [dialogDni, setDialogDni] = useState(
-    devState ? "40111010" : "",
-  );
+  const [dialogDni, setDialogDni] = useState(devState ? "40111010" : "");
   const [dialogNombre, setDialogNombre] = useState(
     devState === "sin-cambios" ? "Sofía Belén" : "Sofía Belén",
   );
@@ -124,12 +122,7 @@ export function useAdminPendingPage() {
   );
 
   const openCorregir = useCallback(
-    (
-      userId: string,
-      dni: string,
-      nombre: string,
-      apellido: string,
-    ) => {
+    (userId: string, dni: string, nombre: string, apellido: string) => {
       setDialogUserId(userId);
       setDialogDni(dni);
       setDialogNombre(nombre);
