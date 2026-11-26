@@ -2,6 +2,7 @@ import { ErrorState } from "@franja/ui/components/error-state";
 import { LoadingState } from "@franja/ui/components/loading-state";
 import { cn } from "@franja/ui/lib/utils";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { LogoutConfirmDialog } from "../components/LogoutConfirmDialog";
 import { StudentFooter } from "../components/StudentFooter";
 import { StudentHeader } from "../components/StudentHeader";
@@ -267,9 +268,12 @@ function CareersSection({
         <span className="flex h-[50px] flex-1 items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada">
           Editar
         </span>
-        <span className="flex h-[50px] flex-1 items-center justify-center rounded-lg bg-franja-morada text-sm font-bold text-white">
+        <Link
+          to="/importar-siu"
+          className="flex h-[50px] flex-1 items-center justify-center rounded-lg bg-franja-morada text-sm font-bold text-white"
+        >
           Importar PDF del SIU
-        </span>
+        </Link>
       </div>
     </div>
   );
@@ -288,9 +292,12 @@ function NoAcademicDataCard() {
         Todavía no cargaste tu plan de estudios. Importá el PDF del SIU para ver
         tu carrera y tu plan.
       </p>
-      <span className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-5 text-sm font-bold text-white">
+      <Link
+        to="/importar-siu"
+        className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-5 text-sm font-bold text-white"
+      >
         Importar PDF del SIU
-      </span>
+      </Link>
     </div>
   );
 }
