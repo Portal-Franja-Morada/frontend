@@ -133,7 +133,9 @@ export function VerificationPage() {
   );
 
   const goToLogin = () => {
-    window.location.assign(LOGIN_PATH);
+    window.location.assign(
+      `${LOGIN_PATH}?redirect=${encodeURIComponent("/verificacion")}`,
+    );
   };
 
   const loadMe = useCallback(async () => {

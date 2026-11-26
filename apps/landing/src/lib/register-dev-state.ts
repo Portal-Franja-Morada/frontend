@@ -16,7 +16,7 @@ const DEV_STATES: RegisterDevState[] = [
 ];
 
 export function readRegisterDevState(): RegisterDevState | null {
-  if (!import.meta.env.DEV) {
+  if (!import.meta.env.DEV || typeof window === "undefined") {
     return null;
   }
   const value = new URLSearchParams(window.location.search).get("estado");

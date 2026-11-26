@@ -260,7 +260,7 @@ export function Header({ currentPath = "/" }: HeaderProps) {
         </nav>
 
         <a
-          href="#"
+          href="/ingresar"
           className={cn(
             buttonVariants({ variant: "default" }),
             "hidden h-11 rounded-lg bg-franja-morada px-5 text-sm font-bold text-white hover:bg-franja-morada/90 lg:inline-flex",
@@ -300,7 +300,7 @@ export function Header({ currentPath = "/" }: HeaderProps) {
             </a>
           ))}
           <a
-            href="#"
+            href="/ingresar"
             className={cn(
               buttonVariants({ variant: "default" }),
               "h-11 w-fit rounded-lg bg-franja-morada px-5 text-sm font-bold text-white hover:bg-franja-morada/90",

@@ -2,12 +2,31 @@ import { FETCH_TIMEOUT_MS } from "./constants";
 import { TERMS_VERSION } from "./auth-constants";
 import { getApiBaseUrl } from "./fetch-home";
 
+export type Role = "PUBLIC" | "STUDENT" | "VERIFIED_STUDENT" | "ADMIN";
+
+export type MeResponse = {
+  id: string;
+  email: string;
+  rol: Role;
+  emailVerificado: boolean;
+};
+
 export type RegisterPayload = {
   email: string;
   password: string;
   consentimiento: true;
   versionTerminos: typeof TERMS_VERSION;
 };
+
+function isMeResponse(data: unknown): data is MeResponse {
+  if (!data || typeof data !== "object") return false;
+  const record = data as Record<string, unknown>;
+  return (
+    typeof record.id === "string" &&
+    typeof record.email === "string" &&
+    typeof record.rol === "string"
+  );
+}
 
 export class ApiError extends Error {
   readonly status: number;
@@ -103,6 +122,27 @@ export async function apiFetch(
   } finally {
     window.clearTimeout(timeout);
   }
+}
+
+export async function login(
+  email: string,
+  password: string,
+): Promise<MeResponse> {
+  const response = await apiFetch("/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+  });
+
+  if (!response.ok) {
+    throw await readApiError(response);
+  }
+
+  const data: unknown = await response.json();
+  if (!isMeResponse(data)) {
+    throw new Error("Respuesta de login inválida");
+  }
+  return data;
 }
 
 export async function register(payload: RegisterPayload): Promise<void> {

@@ -9,7 +9,7 @@ const DEV_STATES: ForgotPasswordDevState[] = [
 ];
 
 export function readForgotPasswordDevState(): ForgotPasswordDevState | null {
-  if (!import.meta.env.DEV) {
+  if (!import.meta.env.DEV || typeof window === "undefined") {
     return null;
   }
   const value = new URLSearchParams(window.location.search).get("estado");

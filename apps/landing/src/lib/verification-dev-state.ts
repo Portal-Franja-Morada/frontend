@@ -28,7 +28,7 @@ const DEV_STATES: VerificationDevState[] = [
 ];
 
 export function readVerificationDevState(): VerificationDevState | null {
-  if (!import.meta.env.DEV) {
+  if (!import.meta.env.DEV || typeof window === "undefined") {
     return null;
   }
   const value = new URLSearchParams(window.location.search).get("estado");
