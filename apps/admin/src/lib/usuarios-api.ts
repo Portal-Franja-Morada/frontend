@@ -55,3 +55,28 @@ export async function corregirIdentidad(
   if (!response.ok) throw await readApiError(response);
   return response.json() as Promise<IdentidadResponse>;
 }
+
+export async function verificarUsuario(
+  userId: string,
+): Promise<IdentidadResponse> {
+  const response = await apiFetch(`/admin/usuarios/${userId}/verificar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  });
+  if (!response.ok) throw await readApiError(response);
+  return response.json() as Promise<IdentidadResponse>;
+}
+
+export async function rechazarUsuario(
+  userId: string,
+  motivo: string,
+): Promise<IdentidadResponse> {
+  const response = await apiFetch(`/admin/usuarios/${userId}/rechazar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ motivo: motivo.trim() }),
+  });
+  if (!response.ok) throw await readApiError(response);
+  return response.json() as Promise<IdentidadResponse>;
+}

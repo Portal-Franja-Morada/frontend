@@ -26,6 +26,9 @@ type PublishConfirmOverlayProps = {
   busy?: boolean;
   title?: string;
   message?: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  error?: string | null;
 };
 
 export function PublishConfirmOverlay({
@@ -34,6 +37,9 @@ export function PublishConfirmOverlay({
   busy,
   title = "¿PUBLICAMOS ESTA NOVEDAD?",
   message = "Va a quedar visible para toda la comunidad. Revisá el título, la imagen y el contenido antes de continuar.",
+  confirmLabel = "Sí, publicar",
+  cancelLabel = "Seguir editando",
+  error,
 }: PublishConfirmOverlayProps) {
   return (
     <div
@@ -50,6 +56,9 @@ export function PublishConfirmOverlay({
           {title}
         </h2>
         <p className="mt-3 text-base text-franja-muted">{message}</p>
+        {error ? (
+          <p className="mt-4 text-sm font-bold text-franja-error">{error}</p>
+        ) : null}
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Button
             type="button"
@@ -57,7 +66,7 @@ export function PublishConfirmOverlay({
             onClick={onConfirm}
             className="h-12 rounded-lg bg-franja-morada text-sm font-bold text-white hover:bg-franja-morada/90"
           >
-            Sí, publicar
+            {busy ? "Procesando…" : confirmLabel}
           </Button>
           <Button
             type="button"
@@ -66,7 +75,7 @@ export function PublishConfirmOverlay({
             onClick={onCancel}
             className="h-12 rounded-lg border-franja-border bg-white text-sm font-bold text-franja-morada"
           >
-            Seguir editando
+            {cancelLabel}
           </Button>
         </div>
       </OverlayCard>
