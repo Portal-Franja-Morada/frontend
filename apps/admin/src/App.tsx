@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { GuestRoute } from "./components/GuestRoute";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
+import { NovedadesPage } from "./pages/NovedadesPage";
 import { PanelPage } from "./pages/PanelPage";
 
 export function App() {
@@ -20,6 +21,14 @@ export function App() {
         element={
           <ProtectedRoute>
             <PanelPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/novedades"
+        element={
+          <ProtectedRoute>
+            <NovedadesPage />
           </ProtectedRoute>
         }
       />
