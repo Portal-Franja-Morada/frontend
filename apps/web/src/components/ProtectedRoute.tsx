@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/use-auth";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { status } = useAuth();
-  const loginUrl = `${getLandingSiteUrl()}/registro`;
+  const loginUrl = `${getLandingSiteUrl()}/ingresar`;
 
   if (status === "loading") {
     return (
