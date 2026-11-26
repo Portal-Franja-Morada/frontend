@@ -3,9 +3,23 @@ import type {
   AdminEvent,
   AdminEventsPage,
   ContentEstado,
+  CreateEventPayload,
+  UpdateEventPayload,
 } from "../types/content";
 import { ADMIN_EVENTS_PAGE_LIMIT, ADMIN_LIST_FETCH_LIMIT } from "./constants";
 import { apiFetch, readApiError } from "./api";
+
+function isAdminEvent(data: unknown): data is AdminEvent {
+  if (!data || typeof data !== "object") {
+    return false;
+  }
+  const record = data as Record<string, unknown>;
+  return (
+    typeof record.id === "string" &&
+    typeof record.titulo === "string" &&
+    typeof record.descripcion === "string"
+  );
+}
 
 function isAdminEventsPage(data: unknown): data is AdminEventsPage {
   if (!data || typeof data !== "object") {
@@ -69,6 +83,57 @@ export async function fetchAdminEventsStats(): Promise<AdminContentStats> {
     publicados: publicadosPage.total,
     borradores: borradoresPage.total,
   };
+}
+
+export async function createEvent(
+  body: CreateEventPayload,
+): Promise<AdminEvent> {
+  const response = await apiFetch("/admin/events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    throw await readApiError(response);
+  }
+  const data: unknown = await response.json();
+  if (!isAdminEvent(data)) {
+    throw new Error("Respuesta de evento inválida");
+  }
+  return data;
+}
+
+export async function updateEvent(
+  id: string,
+  body: UpdateEventPayload,
+): Promise<AdminEvent> {
+  const response = await apiFetch(`/admin/events/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    throw await readApiError(response);
+  }
+  const data: unknown = await response.json();
+  if (!isAdminEvent(data)) {
+    throw new Error("Respuesta de evento inválida");
+  }
+  return data;
+}
+
+export async function publishEvent(id: string): Promise<AdminEvent> {
+  const response = await apiFetch(`/admin/events/${id}/publicar`, {
+    method: "POST",
+  });
+  if (!response.ok) {
+    throw await readApiError(response);
+  }
+  const data: unknown = await response.json();
+  if (!isAdminEvent(data)) {
+    throw new Error("Respuesta de publicación inválida");
+  }
+  return data;
 }
 
 export async function fetchAdminEventById(

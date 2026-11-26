@@ -24,12 +24,16 @@ type PublishConfirmOverlayProps = {
   onConfirm: () => void;
   onCancel: () => void;
   busy?: boolean;
+  title?: string;
+  message?: string;
 };
 
 export function PublishConfirmOverlay({
   onConfirm,
   onCancel,
   busy,
+  title = "¿PUBLICAMOS ESTA NOVEDAD?",
+  message = "Va a quedar visible para toda la comunidad. Revisá el título, la imagen y el contenido antes de continuar.",
 }: PublishConfirmOverlayProps) {
   return (
     <div
@@ -43,12 +47,9 @@ export function PublishConfirmOverlay({
           id="publish-dialog-title"
           className="text-xl font-bold text-franja-dark"
         >
-          ¿PUBLICAMOS ESTA NOVEDAD?
+          {title}
         </h2>
-        <p className="mt-3 text-base text-franja-muted">
-          Va a quedar visible para toda la comunidad. Revisá el título, la
-          imagen y el contenido antes de continuar.
-        </p>
+        <p className="mt-3 text-base text-franja-muted">{message}</p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Button
             type="button"
@@ -75,18 +76,20 @@ export function PublishConfirmOverlay({
 
 type ValidationOverlayProps = {
   onBack: () => void;
+  message?: string;
 };
 
-export function ValidationOverlay({ onBack }: ValidationOverlayProps) {
+export function ValidationOverlay({
+  onBack,
+  message = "Agregá un título y el cuerpo de la novedad.",
+}: ValidationOverlayProps) {
   return (
     <div className="mb-6 w-full max-w-[632px]">
       <OverlayCard className="border-franja-error/30">
         <p className="text-xs font-bold uppercase tracking-wide text-franja-error">
           Revisá los campos
         </p>
-        <p className="mt-2 text-base text-franja-muted">
-          Agregá un título y el cuerpo de la novedad.
-        </p>
+        <p className="mt-2 text-base text-franja-muted">{message}</p>
         <p className="mt-2 text-[13px] text-franja-muted">
           No se publicó nada. Tus cambios se conservan.
         </p>
@@ -103,10 +106,16 @@ export function ValidationOverlay({ onBack }: ValidationOverlayProps) {
   );
 }
 
-export function PublishSuccessBanner() {
+type PublishSuccessBannerProps = {
+  title?: string;
+};
+
+export function PublishSuccessBanner({
+  title = "¡Novedad publicada!",
+}: PublishSuccessBannerProps) {
   return (
     <div className="mb-6 w-full max-w-[632px] rounded-[10px] border border-franja-border bg-white p-[18px]">
-      <p className="text-sm font-bold text-[#246448]">¡Novedad publicada!</p>
+      <p className="text-sm font-bold text-[#246448]">{title}</p>
       <p className="mt-2 text-[13px] text-franja-muted">
         La publicación ya está disponible en el sitio.
       </p>

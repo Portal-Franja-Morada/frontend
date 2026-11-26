@@ -34,6 +34,53 @@ export function formatAdminListDate(iso: string): string {
   }).format(date);
 }
 
+export function formatEventDay(iso: string): string {
+  return new Intl.DateTimeFormat("es-AR", {
+    day: "2-digit",
+    timeZone: ARGENTINA_TZ,
+  }).format(new Date(iso));
+}
+
+export function formatEventMonth(iso: string): string {
+  return new Intl.DateTimeFormat("es-AR", {
+    month: "short",
+    timeZone: ARGENTINA_TZ,
+  })
+    .format(new Date(iso))
+    .replace(/\./g, "")
+    .toUpperCase();
+}
+
+export function formatEventTimeRange(
+  inicio: string,
+  fin: string | null,
+): string {
+  const start = formatLastSavedTime(new Date(inicio));
+  if (!fin) {
+    return `${start} h`;
+  }
+  const end = formatLastSavedTime(new Date(fin));
+  return `${start} a ${end} h`;
+}
+
+export function formatEventPreviewMeta(
+  fecha: string,
+  horaInicio: string,
+): string {
+  if (!fecha || !horaInicio) {
+    return "Fecha y horario del evento";
+  }
+  const [year, month, day] = fecha.split("-");
+  const monthLabel = new Intl.DateTimeFormat("es-AR", {
+    month: "short",
+    timeZone: ARGENTINA_TZ,
+  })
+    .format(new Date(Number(year), Number(month) - 1, Number(day)))
+    .replace(/\./g, "")
+    .toUpperCase();
+  return `${day} ${monthLabel} ${year} · ${horaInicio} H`;
+}
+
 export function previewCategoryFromTitle(titulo: string): string {
   const trimmed = titulo.trim();
   if (!trimmed) {

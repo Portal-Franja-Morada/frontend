@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { GuestRoute } from "./components/GuestRoute";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
+import { EventoEditorPage } from "./pages/EventoEditorPage";
 import { EventosPage } from "./pages/EventosPage";
 import { NovedadEditorPage } from "./pages/NovedadEditorPage";
 import { NovedadesPage } from "./pages/NovedadesPage";
@@ -55,6 +56,22 @@ export function App() {
         element={
           <ProtectedRoute>
             <EventosPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/eventos/nuevo"
+        element={
+          <ProtectedRoute>
+            <EventoEditorPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/eventos/:id/editar"
+        element={
+          <ProtectedRoute>
+            <EventoEditorPage />
           </ProtectedRoute>
         }
       />
