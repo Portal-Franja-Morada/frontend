@@ -4,7 +4,9 @@ import { useAuth } from "../hooks/use-auth";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { status } = useAuth();
-  const loginUrl = `${getLandingSiteUrl()}/ingresar`;
+  const landingUrl = getLandingSiteUrl();
+  const loginUrl = `${landingUrl}/ingresar`;
+  const verificationUrl = `${landingUrl}/verificacion`;
 
   if (status === "loading") {
     return (
@@ -16,6 +18,11 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (status === "anonymous") {
     window.location.href = loginUrl;
+    return null;
+  }
+
+  if (status === "unverified") {
+    window.location.href = verificationUrl;
     return null;
   }
 

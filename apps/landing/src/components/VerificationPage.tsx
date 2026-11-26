@@ -19,6 +19,7 @@ import {
   type VerificationDevState,
   readVerificationDevState,
 } from "../lib/verification-dev-state";
+import { getWebAppUrl } from "../lib/site-urls";
 import {
   fetchMeVerification,
   resendEmailVerification,
@@ -39,8 +40,11 @@ type Phase =
 type FormNotice = "nombre" | "rechazada" | "intentos" | null;
 
 const LOGIN_PATH = "/ingresar";
-const PROFILE_PATH = "/perfil";
 const CONTACT_PATH = "#";
+
+function profileUrl(): string {
+  return `${getWebAppUrl()}/perfil`;
+}
 
 type InitialState = {
   phase: Phase;
@@ -381,7 +385,7 @@ export function VerificationPage() {
                 secciones del portal.
               </p>
               <Pill tone="success">CUENTA VERIFICADA</Pill>
-              <PrimaryLink href={PROFILE_PATH}>Ir a mi perfil</PrimaryLink>
+              <PrimaryLink href={profileUrl()}>Ir a mi perfil</PrimaryLink>
             </StatusPanel>
           ) : null}
 
@@ -398,7 +402,7 @@ export function VerificationPage() {
                 Mientras tanto, podés seguir usando las secciones públicas.
               </p>
               <Pill tone="warning">PENDIENTE DE APROBACIÓN MANUAL</Pill>
-              <SecondaryLink href={PROFILE_PATH}>Ir a mi perfil</SecondaryLink>
+              <SecondaryLink href={profileUrl()}>Ir a mi perfil</SecondaryLink>
             </StatusPanel>
           ) : null}
 

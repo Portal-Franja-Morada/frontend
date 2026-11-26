@@ -168,3 +168,30 @@ export async function forgotPassword(email: string): Promise<void> {
     throw await readApiError(response);
   }
 }
+
+export async function verifyEmailToken(token: string): Promise<void> {
+  const response = await apiFetch("/auth/verify-email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+
+  if (!response.ok) {
+    throw await readApiError(response);
+  }
+}
+
+export async function resetPassword(
+  token: string,
+  password: string,
+): Promise<void> {
+  const response = await apiFetch("/auth/reset-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, password }),
+  });
+
+  if (!response.ok) {
+    throw await readApiError(response);
+  }
+}

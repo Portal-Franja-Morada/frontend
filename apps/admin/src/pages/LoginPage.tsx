@@ -6,6 +6,7 @@ import { AdminFooter } from "../components/AdminFooter";
 import { AdminHeader } from "../components/AdminHeader";
 import { ApiError, isNetworkError } from "../lib/api";
 import { authInputClassName } from "../lib/auth-form";
+import { getLandingSiteUrl } from "../lib/constants";
 import { useAuth } from "../hooks/use-auth";
 
 type LoginErrorKind = "credentials" | "network" | "admin" | "config";
@@ -203,11 +204,12 @@ export function LoginPage() {
             <p className="mt-6 text-center text-[13px] text-franja-muted">
               ¿Todavía no tenés cuenta?
             </p>
-            <div className="mt-3">
-              <span className="flex h-[50px] w-full items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada">
-                Crear cuenta
-              </span>
-            </div>
+            <a
+              href={`${getLandingSiteUrl()}/registro`}
+              className="mt-3 flex h-[50px] w-full items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada"
+            >
+              Crear cuenta
+            </a>
           </div>
 
           <aside className="w-full rounded-2xl bg-white p-6 lg:max-w-[400px] lg:p-8">
