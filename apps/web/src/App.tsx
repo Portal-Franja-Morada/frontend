@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ImportarSiuPage } from "./pages/ImportarSiuPage";
+import { HistorialPage } from "./pages/HistorialPage";
 import { MapaCurricularPage } from "./pages/MapaCurricularPage";
 import { PerfilPage } from "./pages/PerfilPage";
 
@@ -28,6 +29,14 @@ export function App() {
         element={
           <ProtectedRoute>
             <MapaCurricularPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/historial"
+        element={
+          <ProtectedRoute>
+            <HistorialPage />
           </ProtectedRoute>
         }
       />
