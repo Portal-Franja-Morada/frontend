@@ -8,9 +8,9 @@ import {
   type ReactNode,
 } from "react";
 import { fetchCurrentUser, logout as logoutApi } from "../lib/auth-api";
-import type { AuthUser, Role } from "../types/auth";
+import type { AuthUser } from "../types/auth";
 
-type AuthStatus = "loading" | "anonymous" | "authenticated";
+type AuthStatus = "loading" | "anonymous" | "unverified" | "authenticated";
 
 type AuthContextValue = {
   status: AuthStatus;
@@ -18,8 +18,6 @@ type AuthContextValue = {
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };
-
-const STUDENT_ROLES = new Set<Role>(["STUDENT", "VERIFIED_STUDENT"]);
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -31,9 +29,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus("loading");
     try {
       const me = await fetchCurrentUser();
-      if (me && STUDENT_ROLES.has(me.rol)) {
+      if (me?.rol === "VERIFIED_STUDENT") {
         setUser(me);
         setStatus("authenticated");
+        return;
+      }
+      if (me?.rol === "STUDENT") {
+        setUser(me);
+        setStatus("unverified");
         return;
       }
       if (me) await logoutApi();

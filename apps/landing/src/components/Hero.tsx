@@ -32,7 +32,7 @@ export function Hero() {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <a
-            href="#"
+            href="/registro"
             className={cn(
               buttonVariants({ variant: "default" }),
               "h-12 rounded-lg bg-franja-morada px-5.5 text-sm font-bold text-white ring-1 ring-white/20 hover:bg-franja-morada/90",
@@ -41,7 +41,7 @@ export function Hero() {
             Crear cuenta
           </a>
           <a
-            href="#"
+            href="/novedades"
             className={cn(
               buttonVariants({ variant: "outline" }),
               "h-12 rounded-lg border-franja-gold bg-transparent px-5.5 text-sm font-bold text-white hover:bg-white/10",
