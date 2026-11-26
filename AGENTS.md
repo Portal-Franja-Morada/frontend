@@ -4,7 +4,7 @@ Portal Franja Morada — frontend del portal de estudiantes de la Facultad de Ci
 
 ## Proyecto
 
-- Monorepo pnpm: `apps/landing` (Astro, sitio público), `apps/admin` (Vite + React, detrás de login), `packages/ui` (`@franja/ui`).
+- Monorepo pnpm: `apps/landing` (Astro, sitio público), `apps/web` (Vite + React, estudiante logueado), `apps/admin` (Vite + React, panel admin), `packages/ui` (`@franja/ui`).
 - El backend está en otro repo, normalmente clonado en `../backend`. Setup local: `apps/landing/README.md` y README del backend (`pnpm db:seed:demo`).
 
 ## Stack
@@ -15,6 +15,7 @@ Node 22.23.5 (`.nvmrc`), TypeScript, Prettier y ESLint. Tailwind CSS v4 y shadcn
 
 ```text
 apps/landing     @franja/landing   sitio público (Astro, estático)
+apps/web         @franja/web        portal estudiantil logueado (React + Vite)
 apps/admin       @franja/admin      panel de administración (React + Vite)
 packages/ui      @franja/ui         componentes React, estilos y tema
 ```
@@ -45,7 +46,7 @@ Desde la raíz:
 
 ```sh
 pnpm install
-pnpm dev            # @franja/landing y @franja/admin en paralelo
+pnpm dev            # landing, web (estudiante) y admin en paralelo
 pnpm build          # build de los workspaces que tienen script build
 pnpm lint           # eslint .
 pnpm format         # prettier --write .
