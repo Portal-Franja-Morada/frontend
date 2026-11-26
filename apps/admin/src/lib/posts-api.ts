@@ -6,7 +6,7 @@ import type {
   CreatePostPayload,
   UpdatePostPayload,
 } from "../types/content";
-import { ADMIN_POSTS_PAGE_LIMIT } from "./constants";
+import { ADMIN_LIST_FETCH_LIMIT, ADMIN_POSTS_PAGE_LIMIT } from "./constants";
 import { apiFetch, readApiError } from "./api";
 
 function isAdminPostsPage(data: unknown): data is AdminPostsPage {
@@ -118,6 +118,34 @@ export async function updatePost(
     throw new Error("Respuesta de novedad inválida");
   }
   return data;
+}
+
+export async function fetchAdminPostById(
+  id: string,
+): Promise<AdminPost | null> {
+  let page = 1;
+
+  for (;;) {
+    const response = await apiFetch(
+      `/admin/posts?page=${page}&limit=${ADMIN_LIST_FETCH_LIMIT}`,
+    );
+    if (!response.ok) {
+      throw await readApiError(response);
+    }
+    const data: unknown = await response.json();
+    if (!isAdminPostsPage(data)) {
+      throw new Error("Respuesta de novedades inválida");
+    }
+    const found = data.items.find((item) => item.id === id);
+    if (found) {
+      return found;
+    }
+    const pages = Math.ceil(data.total / ADMIN_LIST_FETCH_LIMIT);
+    if (page >= pages || data.total === 0) {
+      return null;
+    }
+    page += 1;
+  }
 }
 
 export async function publishPost(id: string): Promise<AdminPost> {
