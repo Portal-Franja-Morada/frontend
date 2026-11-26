@@ -284,13 +284,13 @@ function NoAcademicDataCard() {
       <h2 className="mt-2 text-xl font-bold text-franja-dark">
         Sin datos académicos
       </h2>
-    <p className="mt-2 text-base text-franja-muted">
-      Todavía no cargaste tu plan de estudios. Importá el PDF del SIU para ver
-      tu carrera y tu plan.
-    </p>
-    <span className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-5 text-sm font-bold text-white">
-      Importar PDF del SIU
-    </span>
+      <p className="mt-2 text-base text-franja-muted">
+        Todavía no cargaste tu plan de estudios. Importá el PDF del SIU para ver
+        tu carrera y tu plan.
+      </p>
+      <span className="mt-6 inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-5 text-sm font-bold text-white">
+        Importar PDF del SIU
+      </span>
     </div>
   );
 }
