@@ -17,6 +17,7 @@ import { authInputClassName, authInputErrorClassName } from "../lib/auth-form";
 import { readRegisterDevState } from "../lib/register-dev-state";
 
 type FieldErrors = {
+  password?: string;
   confirmPassword?: string;
   terms?: string;
 };
@@ -103,6 +104,10 @@ export function RegisterPage() {
 
     const nextFieldErrors: FieldErrors = {};
 
+    if (!isPasswordValid(password)) {
+      nextFieldErrors.password = PASSWORD_HINT;
+    }
+
     if (password !== confirmPassword) {
       nextFieldErrors.confirmPassword = "Las contraseñas no coinciden.";
     }
@@ -114,10 +119,6 @@ export function RegisterPage() {
 
     if (Object.keys(nextFieldErrors).length > 0) {
       setFieldErrors(nextFieldErrors);
-      return;
-    }
-
-    if (!isPasswordValid(password)) {
       return;
     }
 
@@ -246,14 +247,44 @@ export function RegisterPage() {
                       autoComplete="new-password"
                       required
                       value={password}
-                      onChange={(event) => setPassword(event.target.value)}
+                      onChange={(event) => {
+                        setPassword(event.target.value);
+                        if (fieldErrors.password) {
+                          setFieldErrors((current) => ({
+                            ...current,
+                            password: undefined,
+                          }));
+                        }
+                      }}
                       placeholder="Creá una contraseña"
-                      className={authInputClassName}
+                      className={cn(
+                        authInputClassName,
+                        fieldErrors.password && authInputErrorClassName,
+                      )}
                       disabled={loading}
+                      aria-invalid={Boolean(fieldErrors.password)}
+                      aria-describedby={
+                        fieldErrors.password
+                          ? `${passwordId}-error`
+                          : passwordId
+                      }
                     />
-                    <p className="text-[13px] text-franja-muted">
-                      {PASSWORD_HINT}
-                    </p>
+                    {fieldErrors.password ? (
+                      <p
+                        id={`${passwordId}-error`}
+                        className="text-sm text-franja-error"
+                        role="alert"
+                      >
+                        {fieldErrors.password}
+                      </p>
+                    ) : (
+                      <p
+                        id={passwordId}
+                        className="text-[13px] text-franja-muted"
+                      >
+                        {PASSWORD_HINT}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -365,7 +396,9 @@ export function RegisterPage() {
                       </a>
                     </span>
                   </label>
-                  {fieldErrors.confirmPassword || fieldErrors.terms ? (
+                  {fieldErrors.password ||
+                  fieldErrors.confirmPassword ||
+                  fieldErrors.terms ? (
                     <p className="text-sm font-bold text-franja-dark">
                       Revisá los campos
                     </p>
