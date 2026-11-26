@@ -66,3 +66,15 @@ export type AdminEvent = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type CreateEventPayload = {
+  titulo: string;
+  descripcion: string;
+  lugar: string;
+  inicio: string;
+  fin?: string | null;
+  imagenUrl?: string | null;
+  imagenPublicId?: string | null;
+};
+
+export type UpdateEventPayload = Partial<CreateEventPayload>;
