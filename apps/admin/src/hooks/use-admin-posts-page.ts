@@ -10,7 +10,11 @@ import {
 } from "../lib/pagination";
 import { fetchAdminPostsStats, listAdminPosts } from "../lib/posts-api";
 import { SEARCH_DEBOUNCE_MS } from "../lib/constants";
-import type { AdminPost, AdminPostsStats, ContentEstado } from "../types/content";
+import type {
+  AdminPost,
+  AdminPostsStats,
+  ContentEstado,
+} from "../types/content";
 
 type FetchStatus = "idle" | "loading" | "error" | "ok";
 
@@ -174,10 +178,7 @@ export function useAdminPostsPage() {
   const dataState = resolveDataState(previewState, fetchStatus, total);
   const retry = previewState === "error" ? clearPreviewAndReload : load;
 
-  const selectValue = useMemo(
-    () => estadoFilter ?? "todos",
-    [estadoFilter],
-  );
+  const selectValue = useMemo(() => estadoFilter ?? "todos", [estadoFilter]);
 
   return {
     posts,
