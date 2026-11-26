@@ -9,6 +9,8 @@ const sidebarItems = [
   { label: "Eventos", to: "/eventos" },
   { label: "Pendientes", to: "/pendientes" },
   { label: "Importar padrón", to: "/importar-padron" },
+  { label: "Banco de apuntes", to: "/apuntes" },
+  { label: "Importar apuntes", to: "/importar-apuntes" },
 ] as const;
 
 type AdminSidebarProps = {
