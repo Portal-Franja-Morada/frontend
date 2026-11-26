@@ -96,3 +96,15 @@ export async function register(payload: RegisterPayload): Promise<void> {
     throw await readApiError(response);
   }
 }
+
+export async function forgotPassword(email: string): Promise<void> {
+  const response = await apiFetch("/auth/forgot-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: email.trim().toLowerCase() }),
+  });
+
+  if (!response.ok) {
+    throw await readApiError(response);
+  }
+}
