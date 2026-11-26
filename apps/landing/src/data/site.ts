@@ -11,7 +11,7 @@ export const quickTools = [
   {
     title: "Planes de estudio",
     description: "Conocé tu recorrido →",
-    href: "#",
+    href: "/planes-de-estudio",
   },
   {
     title: "Comunidad Morada",
