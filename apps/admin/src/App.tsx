@@ -7,6 +7,8 @@ import { EventosPage } from "./pages/EventosPage";
 import { NovedadEditorPage } from "./pages/NovedadEditorPage";
 import { NovedadesPage } from "./pages/NovedadesPage";
 import { PanelPage } from "./pages/PanelPage";
+import { ApuntesPage } from "./pages/ApuntesPage";
+import { ImportarApuntesPage } from "./pages/ImportarApuntesPage";
 import { ImportarPadronPage } from "./pages/ImportarPadronPage";
 import { PendientesPage } from "./pages/PendientesPage";
 
@@ -90,6 +92,22 @@ export function App() {
         element={
           <ProtectedRoute>
             <ImportarPadronPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/apuntes"
+        element={
+          <ProtectedRoute>
+            <ApuntesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/importar-apuntes"
+        element={
+          <ProtectedRoute>
+            <ImportarApuntesPage />
           </ProtectedRoute>
         }
       />
