@@ -8,7 +8,7 @@ const sidebarItems = [
   { label: "Novedades", to: "/novedades" },
   { label: "Eventos", to: "/eventos" },
   { label: "Pendientes", to: "/pendientes" },
-  { label: "Importar padrón", to: null },
+  { label: "Importar padrón", to: "/importar-padron" },
 ] as const;
 
 type AdminSidebarProps = {
@@ -30,30 +30,21 @@ export function AdminSidebar({ user, onLogout }: AdminSidebarProps) {
       <div>
         <p className="text-xl font-bold text-franja-dark">Gestión del portal</p>
         <nav className="mt-4 flex flex-col gap-3" aria-label="Menú de gestión">
-          {sidebarItems.map((item) =>
-            item.to ? (
-              <Link
-                key={item.label}
-                to={item.to}
-                className={cn(
-                  "text-sm font-bold",
-                  location.pathname === item.to ||
-                    (item.to !== "/" && location.pathname.startsWith(item.to))
-                    ? "text-franja-morada"
-                    : "text-franja-dark",
-                )}
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <span
-                key={item.label}
-                className="text-sm font-bold text-franja-muted"
-              >
-                {item.label}
-              </span>
-            ),
-          )}
+          {sidebarItems.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              className={cn(
+                "text-sm font-bold",
+                location.pathname === item.to ||
+                  (item.to !== "/" && location.pathname.startsWith(item.to))
+                  ? "text-franja-morada"
+                  : "text-franja-dark",
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
       </div>
 

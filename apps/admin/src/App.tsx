@@ -7,6 +7,7 @@ import { EventosPage } from "./pages/EventosPage";
 import { NovedadEditorPage } from "./pages/NovedadEditorPage";
 import { NovedadesPage } from "./pages/NovedadesPage";
 import { PanelPage } from "./pages/PanelPage";
+import { ImportarPadronPage } from "./pages/ImportarPadronPage";
 import { PendientesPage } from "./pages/PendientesPage";
 
 export function App() {
@@ -81,6 +82,14 @@ export function App() {
         element={
           <ProtectedRoute>
             <PendientesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/importar-padron"
+        element={
+          <ProtectedRoute>
+            <ImportarPadronPage />
           </ProtectedRoute>
         }
       />
