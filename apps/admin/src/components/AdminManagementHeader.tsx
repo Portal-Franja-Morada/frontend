@@ -6,7 +6,7 @@ import { getLandingSiteUrl } from "../lib/constants";
 const navItems = [
   { label: "Panel de gestión", to: "/" },
   { label: "Novedades", to: "/novedades" },
-  { label: "Eventos", to: null },
+  { label: "Eventos", to: "/eventos" },
 ] as const;
 
 export function AdminManagementHeader() {
@@ -34,29 +34,21 @@ export function AdminManagementHeader() {
           className="hidden items-center gap-7.5 lg:flex"
           aria-label="Administración"
         >
-          {navItems.map((item) =>
-            item.to ? (
-              <Link
-                key={item.label}
-                to={item.to}
-                className={cn(
-                  "text-sm font-bold",
-                  location.pathname === item.to
-                    ? "text-franja-morada"
-                    : "text-franja-dark",
-                )}
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <span
-                key={item.label}
-                className="text-sm font-bold text-franja-muted"
-              >
-                {item.label}
-              </span>
-            ),
-          )}
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              className={cn(
+                "text-sm font-bold",
+                location.pathname === item.to ||
+                  (item.to !== "/" && location.pathname.startsWith(item.to))
+                  ? "text-franja-morada"
+                  : "text-franja-dark",
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         <a

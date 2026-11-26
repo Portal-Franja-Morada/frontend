@@ -1,7 +1,7 @@
-import type { AdminPostsStats } from "../types/content";
+import type { AdminContentStats } from "../types/content";
 
 type PostsStatsProps = {
-  stats: AdminPostsStats | null;
+  stats: AdminContentStats | null;
 };
 
 const items = [
