@@ -1,4 +1,4 @@
-import { ADMIN_POSTS_PAGE_LIMIT } from "./constants";
+import { ADMIN_EVENTS_PAGE_LIMIT, ADMIN_POSTS_PAGE_LIMIT } from "./constants";
 
 export function parseListPage(search: string): number {
   const raw = new URLSearchParams(search).get("page");
@@ -28,4 +28,12 @@ export function adminPostsRange(page: number, total: number) {
 
 export function adminPostsTotalPages(total: number) {
   return totalListPages(total, ADMIN_POSTS_PAGE_LIMIT);
+}
+
+export function adminEventsRange(page: number, total: number) {
+  return listRange(page, total, ADMIN_EVENTS_PAGE_LIMIT);
+}
+
+export function adminEventsTotalPages(total: number) {
+  return totalListPages(total, ADMIN_EVENTS_PAGE_LIMIT);
 }

@@ -7,6 +7,7 @@ type AdminPostsPaginationProps = {
   from: number;
   to: number;
   total: number;
+  entityLabel?: string;
   onPageChange: (page: number) => void;
 };
 
@@ -16,6 +17,7 @@ export function AdminPostsPagination({
   from,
   to,
   total,
+  entityLabel = "novedades",
   onPageChange,
 }: AdminPostsPaginationProps) {
   if (total <= 0) {
@@ -25,7 +27,7 @@ export function AdminPostsPagination({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-[13px] text-franja-muted">
-        {from}–{to} de {total} novedades
+        {from}–{to} de {total} {entityLabel}
       </p>
       {page < pages ? (
         <Button

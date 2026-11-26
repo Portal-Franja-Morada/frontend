@@ -6,7 +6,7 @@ import { adminDisplayName } from "../lib/user-display";
 const sidebarItems = [
   { label: "Resumen", to: "/" },
   { label: "Novedades", to: "/novedades" },
-  { label: "Eventos", to: null },
+  { label: "Eventos", to: "/eventos" },
   { label: "Pendientes", to: null },
   { label: "Importar padrón", to: null },
 ] as const;
@@ -37,7 +37,8 @@ export function AdminSidebar({ user, onLogout }: AdminSidebarProps) {
                 to={item.to}
                 className={cn(
                   "text-sm font-bold",
-                  location.pathname === item.to
+                  location.pathname === item.to ||
+                    (item.to !== "/" && location.pathname.startsWith(item.to))
                     ? "text-franja-morada"
                     : "text-franja-dark",
                 )}

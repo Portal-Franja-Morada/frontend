@@ -41,3 +41,28 @@ export type CreatePostPayload = {
 };
 
 export type UpdatePostPayload = Partial<CreatePostPayload>;
+
+export type AdminContentStats = AdminPostsStats;
+
+export type AdminEventsPage = {
+  items: AdminEvent[];
+  page: number;
+  total: number;
+};
+
+export type AdminEvent = {
+  id: string;
+  slug: string;
+  titulo: string;
+  descripcion: string;
+  lugar: string;
+  inicio: string;
+  fin: string | null;
+  imagenUrl: string | null;
+  imagenPublicId: string | null;
+  estado: ContentEstado;
+  publicadoAt: string | null;
+  autorId: string;
+  createdAt: string;
+  updatedAt: string;
+};
