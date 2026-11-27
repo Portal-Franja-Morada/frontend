@@ -4,8 +4,7 @@ import { cn } from "@franja/ui/lib/utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { LogoutConfirmDialog } from "../components/LogoutConfirmDialog";
-import { StudentFooter } from "../components/StudentFooter";
-import { StudentHeader } from "../components/StudentHeader";
+import { StudentLayout } from "../components/StudentLayout";
 import { useAuth } from "../hooks/use-auth";
 import { usePerfilPage } from "../hooks/use-perfil-page";
 import { getLandingSiteUrl } from "../lib/constants";
@@ -54,11 +53,9 @@ export function PerfilPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <StudentHeader currentPath="/perfil" />
-
-      <section className="bg-franja-morada px-5 py-14 text-white lg:px-20 lg:py-16">
-        <div className="mx-auto w-full max-w-[1280px]">
+    <StudentLayout>
+      <section className="bg-franja-morada px-5 py-14 text-white lg:px-10 lg:py-16">
+        <div className="w-full">
           <p className="text-[13px] text-white/90">Inicio / Mi perfil</p>
           <h1 className="mt-3 text-[26px] font-bold leading-tight lg:text-[36px]">
             MI PERFIL.
@@ -66,8 +63,8 @@ export function PerfilPage() {
         </div>
       </section>
 
-      <section className="bg-franja-surface px-5 py-10 lg:px-20 lg:py-14">
-        <div className="mx-auto w-full max-w-[1280px]">
+      <section className="bg-franja-surface px-5 py-10 lg:px-10 lg:py-14">
+        <div className="w-full">
           {loadState === "loading" ? (
             <LoadingState />
           ) : loadState === "error" || !user ? (
@@ -89,9 +86,7 @@ export function PerfilPage() {
         onConfirm={() => void handleLogout()}
         onCancel={() => setLogoutOpen(false)}
       />
-
-      <StudentFooter />
-    </div>
+    </StudentLayout>
   );
 }
 

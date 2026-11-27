@@ -1,7 +1,6 @@
 import { type RefObject } from "react";
 import { Link } from "react-router-dom";
-import { StudentFooter } from "../components/StudentFooter";
-import { StudentHeader } from "../components/StudentHeader";
+import { StudentLayout } from "../components/StudentLayout";
 import { useAuth } from "../hooks/use-auth";
 import {
   useImportSiuPage,
@@ -35,11 +34,9 @@ export function ImportarSiuPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <StudentHeader currentPath="/importar-siu" />
-
-      <section className="bg-franja-morada px-5 py-14 text-white lg:px-20 lg:py-16">
-        <div className="mx-auto w-full max-w-[1280px]">
+    <StudentLayout>
+      <section className="bg-franja-morada px-5 py-14 text-white lg:px-10 lg:py-16">
+        <div className="w-full">
           <p className="text-[13px] text-white/90">
             Inicio / Importar PDF del SIU
           </p>
@@ -52,8 +49,8 @@ export function ImportarSiuPage() {
         </div>
       </section>
 
-      <section className="bg-franja-surface px-5 py-10 lg:px-20 lg:py-14">
-        <div className="mx-auto w-full max-w-[1280px] space-y-8">
+      <section className="bg-franja-surface px-5 py-10 lg:px-10 lg:py-14">
+        <div className="w-full space-y-8">
           <IntroCard />
 
           <div className="rounded-xl bg-white p-6 shadow-sm lg:p-8">
@@ -81,9 +78,7 @@ export function ImportarSiuPage() {
           <SiuGuideCard />
         </div>
       </section>
-
-      <StudentFooter />
-    </div>
+    </StudentLayout>
   );
 }
 

@@ -1,18 +1,15 @@
 import { Link } from "react-router-dom";
 import { DeleteAccountDialog } from "../components/DeleteAccountDialog";
-import { StudentFooter } from "../components/StudentFooter";
-import { StudentHeader } from "../components/StudentHeader";
+import { StudentLayout } from "../components/StudentLayout";
 import { useMisDatosPage } from "../hooks/use-mis-datos-page";
 
 export function MisDatosPage() {
   const vm = useMisDatosPage();
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <StudentHeader currentPath="/mis-datos" />
-
-      <section className="bg-franja-morada px-5 py-14 text-white lg:px-20 lg:py-16">
-        <div className="mx-auto w-full max-w-[1280px]">
+    <StudentLayout>
+      <section className="bg-franja-morada px-5 py-14 text-white lg:px-10 lg:py-16">
+        <div className="w-full">
           <p className="text-[13px] text-white/90">
             Inicio /{" "}
             <Link to="/perfil" className="hover:opacity-90">
@@ -26,8 +23,8 @@ export function MisDatosPage() {
         </div>
       </section>
 
-      <section className="bg-franja-surface px-5 py-10 lg:px-20 lg:py-14">
-        <div className="mx-auto w-full max-w-[1280px] space-y-8">
+      <section className="bg-franja-surface px-5 py-10 lg:px-10 lg:py-14">
+        <div className="w-full space-y-8">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-franja-morada">
               Tus datos y tu privacidad
@@ -101,8 +98,6 @@ export function MisDatosPage() {
         onConfirm={() => void vm.confirmDelete()}
         onCancel={vm.closeDelete}
       />
-
-      <StudentFooter />
-    </div>
+    </StudentLayout>
   );
 }

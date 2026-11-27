@@ -8,6 +8,22 @@ function safeRelativeRedirect(raw: string | null): string | null {
   return raw;
 }
 
+export function resolveAccountHomeUrl(me: MeResponse): string {
+  if (me.rol === "ADMIN") {
+    return `${getAdminAppUrl()}/`;
+  }
+
+  if (me.rol === "PUBLIC") {
+    return "/ingresar";
+  }
+
+  if (!me.emailVerificado) {
+    return "/verificacion";
+  }
+
+  return `${getWebAppUrl()}/perfil`;
+}
+
 export function resolvePostLoginUrl(me: MeResponse): string {
   if (typeof window !== "undefined") {
     const redirect = safeRelativeRedirect(
@@ -18,13 +34,5 @@ export function resolvePostLoginUrl(me: MeResponse): string {
     }
   }
 
-  if (me.rol === "ADMIN") {
-    return `${getAdminAppUrl()}/`;
-  }
-
-  if (!me.emailVerificado) {
-    return "/verificacion";
-  }
-
-  return `${getWebAppUrl()}/perfil`;
+  return resolveAccountHomeUrl(me);
 }

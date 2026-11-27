@@ -124,6 +124,21 @@ export async function apiFetch(
   }
 }
 
+export async function fetchCurrentUser(): Promise<MeResponse | null> {
+  const response = await apiFetch("/auth/me");
+  if (response.status === 401) {
+    return null;
+  }
+  if (!response.ok) {
+    return null;
+  }
+  const data: unknown = await response.json();
+  if (!isMeResponse(data)) {
+    return null;
+  }
+  return data;
+}
+
 export async function login(
   email: string,
   password: string,
