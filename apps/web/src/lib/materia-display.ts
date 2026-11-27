@@ -28,6 +28,50 @@ export function estadoBadgeClass(estado: EstadoMateria | null): string {
   }
 }
 
+export function estadoPillClass(estado: EstadoMateria | null): string {
+  if (!estado) return "bg-[#FAF8F6] text-franja-muted";
+  switch (estado) {
+    case "aprobada":
+      return "bg-[#EDF6F0] text-[#246448]";
+    case "regular":
+      return "border border-franja-border bg-white text-franja-morada";
+    case "cursando":
+      return "bg-[#F6ECF0] text-franja-dark";
+    case "libre":
+      return "border border-franja-border bg-white text-franja-error";
+  }
+}
+
+export function estadoStripeClass(estado: EstadoMateria | null): string {
+  if (!estado) return "bg-[#E7DFE2]";
+  switch (estado) {
+    case "aprobada":
+      return "bg-[#246448]";
+    case "regular":
+      return "bg-[#D39630]";
+    case "cursando":
+      return "bg-franja-morada";
+    case "libre":
+      return "bg-franja-error";
+  }
+}
+
+export const mapaActionPillClass =
+  "border border-franja-border bg-white text-franja-morada";
+
+export function origenLabel(origen: "siu" | "manual"): string {
+  return origen === "manual" ? "EDITADA A MANO" : "SIU";
+}
+
+export function origenPillClass(origen: "siu" | "manual"): string {
+  return origen === "manual"
+    ? "bg-[#F6ECF0] text-franja-dark"
+    : "bg-[#FAF8F6] text-franja-muted";
+}
+
+export const historyPillClass =
+  "inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide";
+
 export function cuatrimestreLabel(cuatrimestre: number | null): string | null {
   if (cuatrimestre === 1) return "1° cuatrimestre";
   if (cuatrimestre === 2) return "2° cuatrimestre";

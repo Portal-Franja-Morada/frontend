@@ -14,11 +14,20 @@ import { useAuth } from "../hooks/use-auth";
 import { useHistorialPage } from "../hooks/use-historial-page";
 import { careerLabel } from "../lib/careers";
 import { formatDateArgentina } from "../lib/dates";
-import { estadoBadgeClass, estadoLabel } from "../lib/materia-display";
+import {
+  estadoLabel,
+  estadoPillClass,
+  historyPillClass,
+  origenLabel,
+  origenPillClass,
+} from "../lib/materia-display";
 import type {
   AcademicHistoryResponse,
   AcademicRecordItem,
 } from "../types/academic-history";
+
+const thClass =
+  "px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wide text-franja-muted";
 
 export function HistorialPage() {
   const { user } = useAuth();
@@ -26,23 +35,16 @@ export function HistorialPage() {
   const verificationGate = verificationImportVariant(user);
   const [careerMenuOpen, setCareerMenuOpen] = useState(false);
 
-  const careerTitle = vm.activeCareer
-    ? `${vm.activeCareer.nombre} · Plan ${vm.activeCareer.anioPlan}`
-    : null;
-
   return (
     <StudentLayout>
       <section className="bg-franja-morada px-5 py-14 text-white lg:px-10 lg:py-16">
         <div className="w-full">
           <p className="text-[13px] text-white/90">
-            Inicio / Mi historial académico
+            Inicio / Mi carrera / Historial académico
           </p>
-          <h1 className="mt-3 whitespace-pre-line text-[26px] font-bold leading-tight lg:text-[36px]">
-            MI HISTORIAL{"\n"}ACADÉMICO.
+          <h1 className="mt-3 text-[26px] font-bold leading-tight lg:text-[36px]">
+            MI HISTORIAL ACADÉMICO.
           </h1>
-          {careerTitle && vm.phase === "lista" && !vm.isEmpty ? (
-            <p className="mt-3 text-base text-white/90">{careerTitle}</p>
-          ) : null}
         </div>
       </section>
 
@@ -70,6 +72,7 @@ export function HistorialPage() {
               careers={vm.careers}
               activeSlug={vm.activeCareer?.slug ?? null}
               careerMenuOpen={careerMenuOpen}
+              showDemoBadge={Boolean(import.meta.env.DEV && vm.devState)}
               onToggleMenu={() => setCareerMenuOpen((v) => !v)}
               onSelectCareer={vm.selectCareer}
               verificationGate={verificationGate}
@@ -161,6 +164,7 @@ function HistorialContent({
   careers,
   activeSlug,
   careerMenuOpen,
+  showDemoBadge,
   onToggleMenu,
   onSelectCareer,
   verificationGate,
@@ -171,6 +175,7 @@ function HistorialContent({
   careers: { slug: string; nombre: string; anioPlan: number | null }[];
   activeSlug: string | null;
   careerMenuOpen: boolean;
+  showDemoBadge: boolean;
   onToggleMenu: () => void;
   onSelectCareer: (slug: string) => void;
   verificationGate: ReturnType<typeof verificationImportVariant>;
@@ -182,46 +187,63 @@ function HistorialContent({
   return (
     <div className="space-y-8">
       <div className="rounded-xl bg-white p-6 shadow-sm lg:p-8">
-        {multipleCareers ? (
-          <div className="relative">
-            <button
-              type="button"
-              onClick={onToggleMenu}
-              className="text-sm font-bold text-franja-morada"
-            >
-              Cambiar carrera {careerMenuOpen ? "▴" : "▾"}
-            </button>
-            {careerMenuOpen ? (
-              <ul className="mt-2 space-y-1">
-                {careers
-                  .filter((c) => c.anioPlan)
-                  .map((c) => (
-                    <li key={c.slug}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onSelectCareer(c.slug);
-                          onToggleMenu();
-                        }}
-                        className={cn(
-                          "text-sm font-bold",
-                          c.slug === activeSlug
-                            ? "text-franja-dark"
-                            : "text-franja-morada",
-                        )}
-                      >
-                        {c.nombre}
-                      </button>
-                    </li>
-                  ))}
-              </ul>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            {showDemoBadge ? (
+              <p className="mb-3">
+                <span
+                  className={cn(
+                    historyPillClass,
+                    "bg-[#FAF8F6] text-franja-muted",
+                  )}
+                >
+                  DATOS DE EJEMPLO
+                </span>
+              </p>
             ) : null}
+            <p className="text-base font-bold text-franja-dark">
+              {careerLabel(data.carrera)} · Plan {data.anioPlan}
+            </p>
           </div>
-        ) : (
-          <p className="text-base font-bold text-franja-dark">
-            {careerLabel(data.carrera)} · Plan {data.anioPlan}
-          </p>
-        )}
+
+          {multipleCareers ? (
+            <div className="relative shrink-0">
+              <button
+                type="button"
+                onClick={onToggleMenu}
+                className="inline-flex h-11 items-center gap-2 rounded-lg border border-franja-border bg-white px-4 text-sm font-bold text-franja-morada"
+              >
+                Cambiar carrera
+                <span aria-hidden>{careerMenuOpen ? "▴" : "▾"}</span>
+              </button>
+              {careerMenuOpen ? (
+                <ul className="absolute right-0 z-10 mt-2 min-w-[12rem] rounded-lg border border-franja-border bg-white p-2 shadow-sm">
+                  {careers
+                    .filter((c) => c.anioPlan)
+                    .map((c) => (
+                      <li key={c.slug}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectCareer(c.slug);
+                            onToggleMenu();
+                          }}
+                          className={cn(
+                            "w-full rounded-md px-3 py-2 text-left text-sm font-bold",
+                            c.slug === activeSlug
+                              ? "bg-franja-surface text-franja-dark"
+                              : "text-franja-morada hover:bg-franja-surface",
+                          )}
+                        >
+                          {c.nombre}
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
 
         {data.ultimoImport ? (
           <ImportSummary
@@ -258,11 +280,36 @@ function HistorialContent({
         </div>
       </div>
 
-      <div className="space-y-4">
-        {data.registros.map((record) => (
-          <RecordCard key={record.codigo} record={record} onEdit={onEdit} />
-        ))}
-      </div>
+      <section className="rounded-xl border border-franja-border bg-white p-6 lg:p-8">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b border-franja-border">
+                <th className={thClass}>Código</th>
+                <th className={thClass}>Materia</th>
+                <th className={thClass}>Estado</th>
+                <th className={thClass}>Nota</th>
+                <th className={thClass}>Aplazos</th>
+                <th className={thClass}>Fecha</th>
+                <th className={thClass}>Acta</th>
+                <th className={thClass}>Origen</th>
+                <th className={thClass}>
+                  <span className="sr-only">Acción</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.registros.map((record) => (
+                <RecordRow
+                  key={record.codigo}
+                  record={record}
+                  onEdit={onEdit}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       <p className="text-[13px] text-franja-muted">
         Solo podés editar materias que ya importaste del SIU. No se pueden
@@ -297,7 +344,7 @@ function ImportSummary({
   );
 }
 
-function RecordCard({
+function RecordRow({
   record,
   onEdit,
 }: {
@@ -305,45 +352,39 @@ function RecordCard({
   onEdit: (r: AcademicRecordItem) => void;
 }) {
   const aplazosText =
-    record.aplazos.length > 0 ? record.aplazos.join(", ") : "—";
-  const notaText = record.nota !== null ? String(record.nota) : "—";
-  const fechaText = record.fecha ? formatDateArgentina(record.fecha) : "—";
-  const actaText = record.acta ?? "—";
+    record.aplazos.length > 0 ? record.aplazos.join(", ") : "-";
+  const notaText = record.nota !== null ? String(record.nota) : "-";
+  const fechaText = record.fecha ? formatDateArgentina(record.fecha) : "-";
+  const actaText = record.acta ? `Acta ${record.acta}` : "-";
 
   return (
-    <div className="rounded-xl bg-white p-5 shadow-sm">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-base font-bold text-franja-dark">
-            {record.codigo} · {record.nombre}
-          </p>
-          <p className="mt-1 text-sm text-franja-muted">
-            Nota {notaText} · Aplazos {aplazosText} · {fechaText} · Acta{" "}
-            {actaText}
-          </p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <span
-              className={cn(
-                "text-[11px] font-bold uppercase tracking-wide",
-                estadoBadgeClass(record.estado),
-              )}
-            >
-              {estadoLabel(record.estado)}
-            </span>
-            <span className="text-[11px] font-bold uppercase tracking-wide text-franja-muted">
-              {record.origen === "manual" ? "Editada a mano" : "SIU"}
-            </span>
-          </div>
-        </div>
+    <tr className="border-b border-franja-border last:border-0">
+      <td className="px-3 py-3 font-bold text-franja-dark">{record.codigo}</td>
+      <td className="px-3 py-3 text-franja-dark">{record.nombre}</td>
+      <td className="px-3 py-3">
+        <span className={cn(historyPillClass, estadoPillClass(record.estado))}>
+          {estadoLabel(record.estado)}
+        </span>
+      </td>
+      <td className="px-3 py-3 text-franja-muted">{notaText}</td>
+      <td className="px-3 py-3 text-franja-muted">{aplazosText}</td>
+      <td className="px-3 py-3 text-franja-muted">{fechaText}</td>
+      <td className="px-3 py-3 text-franja-muted">{actaText}</td>
+      <td className="px-3 py-3">
+        <span className={cn(historyPillClass, origenPillClass(record.origen))}>
+          {origenLabel(record.origen)}
+        </span>
+      </td>
+      <td className="px-3 py-3">
         <button
           type="button"
           onClick={() => onEdit(record)}
-          className="shrink-0 text-sm font-bold text-franja-morada"
+          className="text-sm font-bold text-franja-morada"
         >
           Editar
         </button>
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 }
 
