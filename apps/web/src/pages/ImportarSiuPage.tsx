@@ -178,11 +178,7 @@ function ImportPanel({ vm, onUpload }: ImportPanelProps) {
   );
 }
 
-function SiuFileInput({
-  vm,
-}: {
-  vm: ReturnType<typeof useImportSiuPage>;
-}) {
+function SiuFileInput({ vm }: { vm: ReturnType<typeof useImportSiuPage> }) {
   return (
     <input
       ref={vm.fileInputRef}

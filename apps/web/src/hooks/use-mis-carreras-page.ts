@@ -78,9 +78,7 @@ export function useMisCarrerasPage(user: MeResponse | null) {
   }, []);
 
   const save = useCallback(
-    async (
-      refresh: (options?: { silent?: boolean }) => Promise<void>,
-    ) => {
+    async (refresh: (options?: { silent?: boolean }) => Promise<void>) => {
       if (devState) {
         if (draft.length === 0) {
           setSaveError("Tenés que conservar al menos una carrera.");

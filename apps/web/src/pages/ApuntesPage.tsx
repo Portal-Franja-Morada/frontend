@@ -143,7 +143,10 @@ export function ApuntesPage() {
                             </thead>
                             <tbody>
                               {grupo.materias.map((materia) => (
-                                <MateriaRow key={materia.codigo} materia={materia} />
+                                <MateriaRow
+                                  key={materia.codigo}
+                                  materia={materia}
+                                />
                               ))}
                             </tbody>
                           </table>
