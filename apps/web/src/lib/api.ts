@@ -3,10 +3,13 @@ import type { ApiErrorBody } from "../types/auth";
 
 export function getApiBaseUrl(): string | null {
   const raw = import.meta.env.VITE_API_URL?.trim();
-  if (!raw) {
-    return null;
+  if (raw) {
+    return raw.replace(/\/$/, "");
   }
-  return raw.replace(/\/$/, "");
+  if (import.meta.env.DEV) {
+    return "http://localhost:3000";
+  }
+  return null;
 }
 
 export class ApiError extends Error {

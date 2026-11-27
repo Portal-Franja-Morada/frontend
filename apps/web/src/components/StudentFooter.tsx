@@ -1,7 +1,7 @@
 export function StudentFooter() {
   return (
-    <footer className="bg-franja-morada px-5 py-8 text-white lg:px-20">
-      <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-5">
+    <footer className="bg-franja-morada px-5 py-8 text-white lg:px-8">
+      <div className="flex w-full flex-col gap-5">
         <div className="flex flex-col gap-8 lg:flex-row lg:gap-9">
           <div className="shrink-0">
             <img

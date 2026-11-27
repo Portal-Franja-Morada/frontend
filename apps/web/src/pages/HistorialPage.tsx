@@ -5,8 +5,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { DeleteImportDialog } from "../components/DeleteImportDialog";
 import { EditRecordDialog } from "../components/EditRecordDialog";
-import { StudentFooter } from "../components/StudentFooter";
-import { StudentHeader } from "../components/StudentHeader";
+import { StudentLayout } from "../components/StudentLayout";
 import {
   VerificationImportGate,
   verificationImportVariant,
@@ -32,11 +31,9 @@ export function HistorialPage() {
     : null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <StudentHeader currentPath="/historial" />
-
-      <section className="bg-franja-morada px-5 py-14 text-white lg:px-20 lg:py-16">
-        <div className="mx-auto w-full max-w-[1280px]">
+    <StudentLayout>
+      <section className="bg-franja-morada px-5 py-14 text-white lg:px-10 lg:py-16">
+        <div className="w-full">
           <p className="text-[13px] text-white/90">
             Inicio / Mi historial académico
           </p>
@@ -49,8 +46,8 @@ export function HistorialPage() {
         </div>
       </section>
 
-      <section className="bg-franja-surface px-5 py-10 lg:px-20 lg:py-14">
-        <div className="mx-auto w-full max-w-[1280px]">
+      <section className="bg-franja-surface px-5 py-10 lg:px-10 lg:py-14">
+        <div className="w-full">
           {vm.phase === "loading" || vm.loadState === "loading" ? (
             <LoadingState />
           ) : vm.phase === "error" || vm.loadState === "error" ? (
@@ -102,9 +99,7 @@ export function HistorialPage() {
       />
 
       {vm.savedBanner ? <SavedBanner dismiss={vm.dismissSavedBanner} /> : null}
-
-      <StudentFooter />
-    </div>
+    </StudentLayout>
   );
 }
 

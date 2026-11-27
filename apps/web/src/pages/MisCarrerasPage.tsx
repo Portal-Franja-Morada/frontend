@@ -1,8 +1,7 @@
 import { ErrorState } from "@franja/ui/components/error-state";
 import { LoadingState } from "@franja/ui/components/loading-state";
 import { Link } from "react-router-dom";
-import { StudentFooter } from "../components/StudentFooter";
-import { StudentHeader } from "../components/StudentHeader";
+import { StudentLayout } from "../components/StudentLayout";
 import {
   VerificationImportGate,
   verificationImportVariant,
@@ -20,11 +19,9 @@ export function MisCarrerasPage() {
   const blockAdd = vm.showUnverifiedAdd || Boolean(verificationGate);
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <StudentHeader currentPath="/mis-carreras" />
-
-      <section className="bg-franja-morada px-5 py-14 text-white lg:px-20 lg:py-16">
-        <div className="mx-auto w-full max-w-[1280px]">
+    <StudentLayout>
+      <section className="bg-franja-morada px-5 py-14 text-white lg:px-10 lg:py-16">
+        <div className="w-full">
           <p className="text-[13px] text-white/90">Inicio / Mis carreras</p>
           <h1 className="mt-3 text-[26px] font-bold leading-tight lg:text-[36px]">
             MIS CARRERAS.
@@ -32,8 +29,8 @@ export function MisCarrerasPage() {
         </div>
       </section>
 
-      <section className="bg-franja-surface px-5 py-10 lg:px-20 lg:py-14">
-        <div className="mx-auto w-full max-w-[1280px]">
+      <section className="bg-franja-surface px-5 py-10 lg:px-10 lg:py-14">
+        <div className="w-full">
           {vm.loadState === "loading" ? (
             <LoadingState />
           ) : vm.loadState === "error" ? (
@@ -152,8 +149,6 @@ export function MisCarrerasPage() {
           </button>
         </div>
       ) : null}
-
-      <StudentFooter />
-    </div>
+    </StudentLayout>
   );
 }

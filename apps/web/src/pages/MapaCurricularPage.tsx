@@ -3,8 +3,7 @@ import { LoadingState } from "@franja/ui/components/loading-state";
 import { cn } from "@franja/ui/lib/utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { StudentFooter } from "../components/StudentFooter";
-import { StudentHeader } from "../components/StudentHeader";
+import { StudentLayout } from "../components/StudentLayout";
 import { SubjectDetailSheet } from "../components/SubjectDetailSheet";
 import {
   VerificationImportGate,
@@ -30,11 +29,9 @@ export function MapaCurricularPage() {
   const [careerMenuOpen, setCareerMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <StudentHeader currentPath="/mi-carrera" />
-
-      <section className="bg-franja-morada px-5 py-14 text-white lg:px-20 lg:py-16">
-        <div className="mx-auto w-full max-w-[1280px]">
+    <StudentLayout>
+      <section className="bg-franja-morada px-5 py-14 text-white lg:px-10 lg:py-16">
+        <div className="w-full">
           <p className="text-[13px] text-white/90">Inicio / Mi carrera</p>
           <h1 className="mt-3 text-[26px] font-bold leading-tight lg:text-[36px]">
             MI CARRERA.
@@ -45,8 +42,8 @@ export function MapaCurricularPage() {
         </div>
       </section>
 
-      <section className="bg-franja-surface px-5 py-10 lg:px-20 lg:py-14">
-        <div className="mx-auto w-full max-w-[1280px]">
+      <section className="bg-franja-surface px-5 py-10 lg:px-10 lg:py-14">
+        <div className="w-full">
           {vm.phase === "loading" || vm.loadState === "loading" ? (
             <LoadingState />
           ) : vm.phase === "error" || vm.loadState === "error" ? (
@@ -98,9 +95,7 @@ export function MapaCurricularPage() {
           onClose={() => vm.setSelectedMateria(null)}
         />
       ) : null}
-
-      <StudentFooter />
-    </div>
+    </StudentLayout>
   );
 }
 

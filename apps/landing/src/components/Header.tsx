@@ -2,6 +2,8 @@ import { buttonVariants } from "@franja/ui/components/button";
 import { cn } from "@franja/ui/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { navLinks } from "../data/site";
+import { fetchCurrentUser } from "../lib/auth-api";
+import { resolveAccountHomeUrl } from "../lib/login-redirect";
 
 // Pastilla deslizante del menú de escritorio. Técnica de "Tab Pill"
 // (DesignBookmark, https://designbookmark.com/motion#db-tab-pill):
@@ -212,10 +214,32 @@ function isNavActive(currentPath: string, href: string): boolean {
 
 export function Header({ currentPath = "/" }: HeaderProps) {
   const [open, setOpen] = useState(false);
+  const [accountHref, setAccountHref] = useState<string | null>(null);
   const activeIndex = navLinks.findIndex((link) =>
     isNavActive(currentPath, link.href),
   );
   const { navRef, pillRef } = useNavPill(activeIndex);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      const me = await fetchCurrentUser();
+      if (cancelled || !me) {
+        return;
+      }
+      setAccountHref(resolveAccountHomeUrl(me));
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const accountButtonClass = cn(
+    buttonVariants({ variant: "default" }),
+    "h-11 rounded-lg bg-franja-morada px-5 text-sm font-bold text-white hover:bg-franja-morada/90",
+  );
 
   return (
     <header className="border-b border-franja-border bg-white px-5 py-5.5 lg:px-20 lg:py-[22px]">
@@ -259,15 +283,21 @@ export function Header({ currentPath = "/" }: HeaderProps) {
           ))}
         </nav>
 
-        <a
-          href="/ingresar"
-          className={cn(
-            buttonVariants({ variant: "default" }),
-            "hidden h-11 rounded-lg bg-franja-morada px-5 text-sm font-bold text-white hover:bg-franja-morada/90 lg:inline-flex",
-          )}
-        >
-          Ingresar
-        </a>
+        {accountHref ? (
+          <a
+            href={accountHref}
+            className={cn(accountButtonClass, "hidden lg:inline-flex")}
+          >
+            Mi cuenta
+          </a>
+        ) : (
+          <a
+            href="/ingresar"
+            className={cn(accountButtonClass, "hidden lg:inline-flex")}
+          >
+            Ingresar
+          </a>
+        )}
 
         <button
           type="button"
@@ -299,15 +329,15 @@ export function Header({ currentPath = "/" }: HeaderProps) {
               {link.label}
             </a>
           ))}
-          <a
-            href="/ingresar"
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "h-11 w-fit rounded-lg bg-franja-morada px-5 text-sm font-bold text-white hover:bg-franja-morada/90",
-            )}
-          >
-            Ingresar
-          </a>
+          {accountHref ? (
+            <a href={accountHref} className={cn(accountButtonClass, "w-fit")}>
+              Mi cuenta
+            </a>
+          ) : (
+            <a href="/ingresar" className={cn(accountButtonClass, "w-fit")}>
+              Ingresar
+            </a>
+          )}
         </nav>
       ) : null}
     </header>
