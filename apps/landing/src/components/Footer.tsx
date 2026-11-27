@@ -38,6 +38,15 @@ export function Footer() {
           </div>
         </div>
 
+        <div className="flex flex-col gap-1 text-[13px] text-white lg:flex-row lg:gap-6">
+          <a href="/terminos" className="transition-opacity hover:opacity-80">
+            Términos y Condiciones
+          </a>
+          <a href="/privacidad" className="transition-opacity hover:opacity-80">
+            Política de Privacidad
+          </a>
+        </div>
+
         <p className="text-[13px] text-white">
           Transparencia, cercanía, trabajo y reformismo.
         </p>
