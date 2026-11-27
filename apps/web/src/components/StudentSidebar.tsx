@@ -13,49 +13,54 @@ export function StudentSidebar({ user, onLogout }: StudentSidebarProps) {
   const location = useLocation();
 
   return (
-    <aside className="flex w-full shrink-0 flex-col gap-6 bg-white p-6 lg:w-[280px] lg:p-8">
-      <p className="text-xs font-bold uppercase tracking-wide text-franja-muted">
-        Centro de
-        <br />
-        estudiantes
-      </p>
-
-      <div>
-        <p className="text-xl font-bold text-franja-dark">Tu portal</p>
-        <nav
-          className="mt-4 flex flex-col gap-3"
-          aria-label="Menú del estudiante"
-        >
-          {studentNavItems.map((item) => (
-            <Link
-              key={item.label}
-              to={item.to}
-              className={cn(
-                "text-sm font-bold",
-                isStudentNavActive(location.pathname, item.to)
-                  ? "text-franja-morada"
-                  : "text-franja-dark",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-
-      <div className="mt-auto flex flex-col gap-4">
-        <p className="text-[13px] leading-snug text-franja-muted">
-          {studentDisplayName(user)}
+    <aside className="flex w-full shrink-0 px-5 py-8 lg:w-auto lg:px-8 lg:py-10">
+      <div className="flex w-full flex-col gap-3 rounded-xl bg-white p-5 lg:w-56">
+        <p className="text-xs font-bold uppercase tracking-wide text-franja-muted">
+          Centro de
           <br />
-          Estudiante
+          estudiantes
         </p>
-        <button
-          type="button"
-          onClick={onLogout}
-          className="text-left text-sm font-bold text-franja-morada"
-        >
-          Cerrar sesión
-        </button>
+
+        <p className="text-xl font-bold leading-7 text-franja-morada">
+          Tu portal
+        </p>
+
+        <nav className="flex flex-col gap-3" aria-label="Menú del estudiante">
+          {studentNavItems.map((item) => {
+            const isActive = isStudentNavActive(location.pathname, item.to);
+
+            return (
+              <Link
+                key={item.label}
+                to={item.to}
+                className={cn(
+                  "rounded-lg border px-[18px] py-[13px] text-sm font-bold",
+                  isActive
+                    ? "border-franja-morada bg-franja-morada text-white"
+                    : "border-franja-border bg-white text-franja-morada",
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="mt-auto flex flex-col gap-3">
+          <p className="text-[13px] font-normal leading-snug text-franja-muted">
+            {studentDisplayName(user)}
+            <br />
+            Estudiante
+          </p>
+
+          <button
+            type="button"
+            onClick={onLogout}
+            className="text-left text-sm font-bold text-franja-morada"
+          >
+            Cerrar sesión
+          </button>
+        </div>
       </div>
     </aside>
   );
