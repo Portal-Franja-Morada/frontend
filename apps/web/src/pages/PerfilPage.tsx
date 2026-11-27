@@ -60,8 +60,8 @@ function userInitials(user: MeResponse): string {
 function showAcademicBlock(user: MeResponse): boolean {
   return Boolean(
     user.emailVerificado &&
-      user.perfil &&
-      user.perfil.estadoVerificacion === "verificado",
+    user.perfil &&
+    user.perfil.estadoVerificacion === "verificado",
   );
 }
 
@@ -167,7 +167,9 @@ function ProfileContent({
       ) : null}
 
       {!user.perfil || user.verificacion.estado === "sin_enviar" ? (
-        !user.emailVerificado ? null : <VerificationIncompleteBanner />
+        !user.emailVerificado ? null : (
+          <VerificationIncompleteBanner />
+        )
       ) : null}
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -277,7 +279,9 @@ function IdentityCard({
       </div>
 
       <p className="mt-4">
-        <span className={cn(historyPillClass, badge.pillClass)}>{badge.label}</span>
+        <span className={cn(historyPillClass, badge.pillClass)}>
+          {badge.label}
+        </span>
       </p>
 
       <hr className="mt-6 border-franja-border" />
@@ -325,9 +329,7 @@ function CareersSection({
               {career.nombre}
             </p>
             <p className="mt-1 text-[13px] text-franja-muted">
-              {career.anioPlan
-                ? `Plan ${career.anioPlan}`
-                : "Plan sin definir"}
+              {career.anioPlan ? `Plan ${career.anioPlan}` : "Plan sin definir"}
             </p>
           </li>
         ))}
@@ -415,9 +417,7 @@ function EmprendedorSection({
           </span>
         </span>
       </label>
-      {error ? (
-        <p className="mt-3 text-sm text-franja-error">{error}</p>
-      ) : null}
+      {error ? <p className="mt-3 text-sm text-franja-error">{error}</p> : null}
     </div>
   );
 }

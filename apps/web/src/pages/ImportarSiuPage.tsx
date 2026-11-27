@@ -599,10 +599,7 @@ function SiuGuideCard({ className }: { className?: string }) {
     <GuidePanel className={className}>
       <p className="mb-4">
         <span
-          className={cn(
-            historyPillClass,
-            "bg-[#FAF8F6] text-franja-muted",
-          )}
+          className={cn(historyPillClass, "bg-[#FAF8F6] text-franja-muted")}
         >
           CONTENIDO PENDIENTE
         </span>
