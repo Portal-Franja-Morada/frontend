@@ -12,11 +12,16 @@ import type { AuthUser } from "../types/auth";
 
 type AuthStatus = "loading" | "anonymous" | "unverified" | "authenticated";
 
+type RefreshOptions = {
+  /** Actualiza el usuario sin pantalla de carga (no desmonta la página actual). */
+  silent?: boolean;
+};
+
 type AuthContextValue = {
   status: AuthStatus;
   user: AuthUser | null;
   logout: () => Promise<void>;
-  refresh: () => Promise<void>;
+  refresh: (options?: RefreshOptions) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -25,8 +30,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<AuthUser | null>(null);
 
-  const refresh = useCallback(async () => {
-    setStatus("loading");
+  const refresh = useCallback(async (options?: RefreshOptions) => {
+    if (!options?.silent) {
+      setStatus("loading");
+    }
     try {
       const me = await fetchCurrentUser();
       if (me?.rol === "VERIFIED_STUDENT") {
