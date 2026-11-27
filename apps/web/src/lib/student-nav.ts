@@ -4,6 +4,7 @@ export const studentNavItems = [
   { label: "Importar SIU", to: "/importar-siu" },
   { label: "Mapa curricular", to: "/mi-carrera" },
   { label: "Historial", to: "/historial" },
+  { label: "Banco de apuntes", to: "/apuntes" },
   { label: "Mis datos", to: "/mis-datos" },
 ] as const;
 

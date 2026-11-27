@@ -1,4 +1,3 @@
-import { type RefObject } from "react";
 import { Link } from "react-router-dom";
 import { StudentLayout } from "../components/StudentLayout";
 import { useAuth } from "../hooks/use-auth";
@@ -30,7 +29,7 @@ export function ImportarSiuPage() {
       return;
     }
     await vm.upload(vm.selectedFile);
-    if (!import.meta.env.DEV || !vm.devState) await refresh();
+    if (!import.meta.env.DEV || !vm.devState) await refresh({ silent: true });
   };
 
   return (
@@ -54,6 +53,7 @@ export function ImportarSiuPage() {
           <IntroCard />
 
           <div className="rounded-xl bg-white p-6 shadow-sm lg:p-8">
+            <SiuFileInput vm={vm} />
             {vm.verificationGate &&
             vm.verificationGate !== "verificado-prompt" ? (
               <VerificationGateCard gate={vm.verificationGate} user={user} />
@@ -62,10 +62,8 @@ export function ImportarSiuPage() {
               <div className="space-y-6">
                 <VerifiedPrompt onImport={vm.pickFile} />
                 <ImportForm
-                  fileInputRef={vm.fileInputRef}
                   selectedFile={vm.selectedFile}
                   uiState={vm.uiState}
-                  onFileChange={vm.onFileChange}
                   onPickFile={vm.pickFile}
                   onUpload={() => void handleUpload()}
                 />
@@ -160,7 +158,10 @@ function ImportPanel({ vm, onUpload }: ImportPanelProps) {
       <ErrorCard
         state={vm.uiState}
         detail={vm.errorDetail}
-        onChooseFile={vm.pickFile}
+        onChooseFile={() => {
+          vm.resetToForm();
+          vm.pickFile();
+        }}
         onReset={vm.resetToForm}
         onRetry={vm.retry}
       />
@@ -169,28 +170,41 @@ function ImportPanel({ vm, onUpload }: ImportPanelProps) {
 
   return (
     <ImportForm
-      fileInputRef={vm.fileInputRef}
       selectedFile={vm.selectedFile}
       uiState={vm.uiState}
-      onFileChange={vm.onFileChange}
       onPickFile={vm.pickFile}
       onUpload={onUpload}
     />
   );
 }
 
+function SiuFileInput({
+  vm,
+}: {
+  vm: ReturnType<typeof useImportSiuPage>;
+}) {
+  return (
+    <input
+      ref={vm.fileInputRef}
+      type="file"
+      accept="application/pdf,.pdf"
+      className="sr-only"
+      onChange={(event) => {
+        const file = event.target.files?.[0] ?? null;
+        vm.onFileChange(file);
+      }}
+    />
+  );
+}
+
 function ImportForm({
-  fileInputRef,
   selectedFile,
   uiState,
-  onFileChange,
   onPickFile,
   onUpload,
 }: {
-  fileInputRef: RefObject<HTMLInputElement | null>;
   selectedFile: File | null;
   uiState: ImportUiState;
-  onFileChange: (file: File | null) => void;
   onPickFile: () => void;
   onUpload: () => void;
 }) {
@@ -208,17 +222,6 @@ function ImportForm({
           {selectedFile ? ` · ${selectedFile.name}` : ""}
         </p>
       </div>
-
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="application/pdf,.pdf"
-        className="sr-only"
-        onChange={(event) => {
-          const file = event.target.files?.[0] ?? null;
-          onFileChange(file);
-        }}
-      />
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <button

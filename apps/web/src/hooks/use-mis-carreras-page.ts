@@ -78,7 +78,9 @@ export function useMisCarrerasPage(user: MeResponse | null) {
   }, []);
 
   const save = useCallback(
-    async (refresh: () => Promise<void>) => {
+    async (
+      refresh: (options?: { silent?: boolean }) => Promise<void>,
+    ) => {
       if (devState) {
         if (draft.length === 0) {
           setSaveError("Tenés que conservar al menos una carrera.");
@@ -98,7 +100,7 @@ export function useMisCarrerasPage(user: MeResponse | null) {
       try {
         await updateStudentCareers(toAssignments(draft));
         setSavedBanner(true);
-        await refresh();
+        await refresh({ silent: true });
       } catch (error) {
         if (isNetworkError(error)) {
           setSaveError("No pudimos guardar. Probá de nuevo.");
