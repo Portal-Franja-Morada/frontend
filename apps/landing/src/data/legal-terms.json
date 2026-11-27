@@ -1,0 +1,411 @@
+{
+  "index": [
+    {
+      "num": "01",
+      "label": "Aceptación",
+      "slug": "seccion-1"
+    },
+    {
+      "num": "02",
+      "label": "El Portal no es un sitio oficial de la UNNE",
+      "slug": "seccion-2"
+    },
+    {
+      "num": "03",
+      "label": "Qué ofrece el servicio",
+      "slug": "seccion-3"
+    },
+    {
+      "num": "04",
+      "label": "La información académica es solo orientativa",
+      "slug": "seccion-4"
+    },
+    {
+      "num": "05",
+      "label": "Cuenta de usuario",
+      "slug": "seccion-5"
+    },
+    {
+      "num": "06",
+      "label": "Uso aceptable",
+      "slug": "seccion-6"
+    },
+    {
+      "num": "07",
+      "label": "Contenidos que usted aporta",
+      "slug": "seccion-7"
+    },
+    {
+      "num": "08",
+      "label": "Propiedad intelectual y autorización de uso",
+      "slug": "seccion-8"
+    },
+    {
+      "num": "09",
+      "label": "Limitación de responsabilidad",
+      "slug": "seccion-9"
+    },
+    {
+      "num": "10",
+      "label": "Suspensión y cancelación",
+      "slug": "seccion-10"
+    },
+    {
+      "num": "11",
+      "label": "Cambios de estos términos",
+      "slug": "seccion-11"
+    },
+    {
+      "num": "12",
+      "label": "Ley aplicable y jurisdicción",
+      "slug": "seccion-12"
+    },
+    {
+      "num": "13",
+      "label": "Contacto",
+      "slug": "seccion-13"
+    }
+  ],
+  "sections": [
+    {
+      "number": 1,
+      "title": "Aceptación",
+      "slug": "seccion-1",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "1. Aceptación"
+        },
+        {
+          "type": "paragraph",
+          "text": "Estos términos regulan el uso del sitio web del Portal de estudiantes de la Facultad de Ciencias Económicas de la UNNE, administrado por la agrupación estudiantil Franja Morada (en adelante, “el Portal”)."
+        },
+        {
+          "type": "paragraph",
+          "text": "El responsable del Portal es [NOMBRE DEL RESPONSABLE], con correo [EMAIL DE CONTACTO] y domicilio en [DOMICILIO]. Sitio: [DOMINIO DEL SITIO]."
+        },
+        {
+          "type": "paragraph",
+          "text": "Al registrarse, usted debe aceptar estos términos y la Política de privacidad (versión 2026-11), mediante la casilla de consentimiento en la pantalla de creación de cuenta. Esa aceptación es la manifestación de que fue informado y consiente el uso descripto. Si no está de acuerdo, no cree una cuenta y no use las funciones que requieren registro."
+        },
+        {
+          "type": "paragraph",
+          "text": "El tratamiento de los datos personales se rige por la Política de privacidad y por la Ley 25.326."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "El Portal no es un sitio oficial de la UNNE",
+      "slug": "seccion-2",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "2. El Portal no es un sitio oficial de la UNNE"
+        },
+        {
+          "type": "paragraph",
+          "text": "El Portal es un proyecto de la agrupación estudiantil Franja Morada de la Facultad de Ciencias Económicas de la Universidad Nacional del Nordeste. No es un sitio oficial de la UNNE, de la Facultad ni del SIU Guaraní."
+        },
+        {
+          "type": "paragraph",
+          "text": "Nada de lo publicado aquí reemplaza comunicaciones, resoluciones, actas, calendarios, inscripciones, actas de examen ni trámites de la Universidad o de la Facultad. Para gestiones académicas oficiales debe usar los canales institucionales, en especial el SIU Guaraní y las oficinas de la Facultad."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Qué ofrece el servicio",
+      "slug": "seccion-3",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "3. Qué ofrece el servicio"
+        },
+        {
+          "type": "paragraph",
+          "text": "Según las funciones disponibles en cada momento, el Portal puede permitir:"
+        },
+        {
+          "type": "list",
+          "text": "crear una cuenta, verificar el correo y acreditar que es estudiante, contrastando sus datos con un padrón de inscriptos y, cuando corresponda, con la revisión de un administrador;\nconsultar y actualizar un perfil;\nimportar el plan o la historia académica desde un PDF del SIU Guaraní, y completar o corregir ese historial de forma manual, para visualizar de forma orientativa el avance en el plan de estudios (materias, correlativas, estados, notas y aplazos);\nleer novedades y eventos de la Agrupación;"
+        },
+        {
+          "type": "paragraph",
+          "text": "Las carreras contempladas hoy son Contador Público, Licenciatura en Administración, Licenciatura en Economía y Licenciatura en Comercio Exterior."
+        },
+        {
+          "type": "paragraph",
+          "text": "Podemos modificar, suspender o discontinuar funciones, con el aviso que resulte razonable. Cuando se habiliten funciones nuevas, actualizaremos estos términos y, si corresponde, la Política de privacidad."
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "La información académica es solo orientativa",
+      "slug": "seccion-4",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "4. La información académica es solo orientativa"
+        },
+        {
+          "type": "paragraph",
+          "text": "El historial, las notas, los aplazos, el estado de las materias, las correlativas y cualquier cálculo o vista del plan de estudios que muestre el Portal son orientativos. Se basan en lo que el sistema pudo leer de su PDF o en lo que usted o un administrador cargaron o corrigieron. Pueden existir errores de lectura, materias no reconocidas, desfasajes respecto del sistema oficial o planes que aún no están cargados."
+        },
+        {
+          "type": "paragraph",
+          "text": "La fuente oficial de su situación académica es el SIU Guaraní y la Facultad de Ciencias Económicas de la UNNE. Ante cualquier diferencia, prevalece el registro oficial. El Portal no certifica regularidad, aprobación, promedio, aplazos ni ningún otro dato académico."
+        },
+        {
+          "type": "paragraph",
+          "text": "Usted es responsable de revisar lo importado y de no tomar decisiones (inscripciones, finales, trámites) apoyándose solo en lo que muestra el Portal."
+        },
+        {
+          "type": "paragraph",
+          "text": "Ese historial es confidencial: lo ve usted en su cuenta. Otros estudiantes no tienen acceso a sus notas ni a sus aplazos. El alcance de quién más puede acceder (administradores autorizados y equipo técnico) se describe en la Política de privacidad."
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Cuenta de usuario",
+      "slug": "seccion-5",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "5. Cuenta de usuario"
+        },
+        {
+          "type": "subheading",
+          "text": "5.1. Registro"
+        },
+        {
+          "type": "paragraph",
+          "text": "El registro tiene dos pasos: creación de la cuenta (correo, contraseña y aceptación de estos términos y de la política de privacidad) y verificación de identidad (nombre, apellido, DNI y, de forma opcional, teléfono), contrastada con el padrón de estudiantes. No se pide el DNI físico ni una imagen del documento. En algunos casos la verificación queda pendiente de un administrador (por ejemplo, si el DNI no aparece en el padrón o el nombre no coincide). Un administrador puede aprobar o rechazar esa solicitud, o corregir nombre y apellido."
+        },
+        {
+          "type": "paragraph",
+          "text": "Debe proporcionar datos veraces y mantenerlos actualizados. La cuenta es personal e intransferible. No está permitido crear una cuenta con datos de otra persona ni usar una cuenta ajena."
+        },
+        {
+          "type": "paragraph",
+          "text": "La contraseña debe tener al menos 8 caracteres. Usted es responsable de su confidencialidad y de lo que se haga con su cuenta. Si sospecha un uso no autorizado, cambie la contraseña y avísenos a [EMAIL DE CONTACTO]."
+        },
+        {
+          "type": "subheading",
+          "text": "5.2. Correo y recupero"
+        },
+        {
+          "type": "paragraph",
+          "text": "Debe tener acceso al correo con el que se registra. Le enviaremos un enlace para verificarlo (válido 24 horas) y, si lo pide, otro para restablecer la contraseña (válido 1 hora y de un solo uso)."
+        },
+        {
+          "type": "subheading",
+          "text": "5.3. Actualización y baja"
+        },
+        {
+          "type": "paragraph",
+          "text": "Usted puede actualizar, desde el Portal, los datos que el sitio le permita editar (por ejemplo, teléfono, nombre visible, preferencias e historial académico). Si necesita corregir el nombre o el apellido vinculados a la verificación, puede pedirlo a [EMAIL DE CONTACTO]."
+        },
+        {
+          "type": "paragraph",
+          "text": "Puede dar de baja su cuenta desde el Portal o pidiéndolo a [EMAIL DE CONTACTO]. Los efectos sobre los datos se describen en la Política de privacidad."
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Uso aceptable",
+      "slug": "seccion-6",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "6. Uso aceptable"
+        },
+        {
+          "type": "paragraph",
+          "text": "Usted se compromete a usar el Portal de buena fe y conforme a la ley argentina. En particular, no debe:"
+        },
+        {
+          "type": "list",
+          "text": "intentar acceder a cuentas, datos o funciones que no le correspondan, incluido el historial académico, las notas o los aplazos de otras personas;\neludir medidas de seguridad, límites de uso o el proceso de verificación;\nsubir archivos que no sean su PDF legítimo del SIU Guaraní, ni archivos maliciosos, alterados para engañar al sistema o ajenos;\nintroducir datos académicos falsos con el fin de inducir a error a otras personas (el historial es para su uso personal y orientativo);\nrecolectar datos de otros estudiantes, del padrón o del sitio de forma automatizada o no autorizada;\npublicar o transmitir contenidos ilícitos, ofensivos, discriminatorios, que infrinjan derechos de terceros o que revelen datos personales de otras personas sin base legal;\nusar el Portal para spam, publicidad no autorizada o cualquier fin ajeno a su objeto;\nrealizar acciones que perjudiquen el funcionamiento del servicio (por ejemplo, sobrecarga deliberada)."
+        },
+        {
+          "type": "paragraph",
+          "text": "El incumplimiento puede dar lugar a la suspensión o cancelación de la cuenta, sin perjuicio de otras acciones legales."
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Contenidos que usted aporta",
+      "slug": "seccion-7",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "7. Contenidos que usted aporta"
+        },
+        {
+          "type": "paragraph",
+          "text": "Al subir un PDF del SIU o al completar su historial, usted declara que se trata de información referida a su propia trayectoria académica y que está facultado a utilizarla en el Portal para esa finalidad. Usted es responsable de los datos que carga."
+        },
+        {
+          "type": "paragraph",
+          "text": "El PDF se procesa para armar su historial y no se conserva como archivo. Usted puede corregir o borrar el historial importado, dentro de las funciones que ofrezca el sitio, y puede pedir la baja de la cuenta."
+        },
+        {
+          "type": "paragraph",
+          "text": "Los datos de su historial académico son confidenciales: están pensados como información de su cuenta, no como una publicación hacia otros estudiantes."
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Propiedad intelectual y autorización de uso",
+      "slug": "seccion-8",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "8. Propiedad intelectual y autorización de uso"
+        },
+        {
+          "type": "paragraph",
+          "text": "El diseño, las marcas, los textos institucionales del Portal, el código y los contenidos creados por la Agrupación (noticias, eventos, materiales propios, organización de los planes de estudio en el sitio) pertenecen a sus respectivos titulares y están protegidos por la normativa de propiedad intelectual. No está permitido copiarlos, modificarlos ni distribuirlos con fines ajenos al uso personal del Portal, salvo autorización o lo que permita la ley."
+        },
+        {
+          "type": "paragraph",
+          "text": "La Agrupación está autorizada a usar el Portal para brindar el servicio a los estudiantes, en los términos de este documento. El acceso de administración se limita a las personas expresamente autorizadas y se revoca cuando dejan esa función."
+        },
+        {
+          "type": "paragraph",
+          "text": "Los planes de estudio, denominaciones de materias y demás información académica de la Facultad son de sus titulares (la UNNE o la Facultad, según corresponda). Su inclusión en el Portal es solo para facilitar la consulta orientativa de los estudiantes."
+        },
+        {
+          "type": "paragraph",
+          "text": "Los contenidos que usted aporta siguen siendo suyos, en la medida en que le pertenezcan. Nos autoriza a tratarlos únicamente para operar el servicio, en los términos de la Política de privacidad."
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Limitación de responsabilidad",
+      "slug": "seccion-9",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "9. Limitación de responsabilidad"
+        },
+        {
+          "type": "paragraph",
+          "text": "El Portal se ofrece “tal como está” y “según disponibilidad”. No garantizamos que el servicio sea ininterrumpido, libre de errores o apto para un fin particular."
+        },
+        {
+          "type": "paragraph",
+          "text": "En la medida que permita la ley argentina:"
+        },
+        {
+          "type": "list",
+          "text": "no respondemos por daños derivados de la imposibilidad de acceder al sitio, de fallas técnicas, de mantenimientos o de hechos de terceros (incluida la caída de SIU, Railway, Vercel, Cloudinary, Resend, OneDrive u otros proveedores);\nno respondemos por decisiones tomadas sobre la base de la información orientativa del Portal (inscripciones, exámenes, trámites, promedio u otros);\nno respondemos por el uso indebido de la cuenta si usted no custodió su contraseña, ni por contenidos o sitios de terceros a los que se enlace desde el Portal;\nla Agrupación no asume las obligaciones de la UNNE ni de la Facultad frente a los estudiantes."
+        },
+        {
+          "type": "paragraph",
+          "text": "Nada de esta cláusula limita la responsabilidad que no pueda ser limitada por ley, ni los derechos que le correspondan como titular de datos personales o, en su caso, como consumidor."
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Suspensión y cancelación",
+      "slug": "seccion-10",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "10. Suspensión y cancelación"
+        },
+        {
+          "type": "paragraph",
+          "text": "Podemos suspender o cancelar una cuenta, o restringir funciones, si hay un incumplimiento de estos términos, un uso que ponga en riesgo la seguridad o los datos de otras personas, un requerimiento legal, o si el servicio se discontinua."
+        },
+        {
+          "type": "paragraph",
+          "text": "Cuando sea razonable, le avisaremos a [EMAIL DE CONTACTO] asociado a la cuenta. En casos graves o urgentes (seguridad, ilicitud, afectación a terceros) podremos actuar de inmediato."
+        },
+        {
+          "type": "paragraph",
+          "text": "Usted puede dejar de usar el Portal y dar de baja su cuenta en cualquier momento."
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "Cambios de estos términos",
+      "slug": "seccion-11",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "11. Cambios de estos términos"
+        },
+        {
+          "type": "paragraph",
+          "text": "Podemos modificar estos términos. La versión vigente se publicará en el Portal, con su fecha y su número de versión. Si el cambio es relevante, lo informaremos por un medio razonable y, cuando corresponda, le pediremos una nueva aceptación para seguir usando la cuenta. El registro exige la versión vigente (hoy, 2026-11)."
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "Ley aplicable y jurisdicción",
+      "slug": "seccion-12",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "12. Ley aplicable y jurisdicción"
+        },
+        {
+          "type": "paragraph",
+          "text": "Estos términos se rigen por las leyes de la República Argentina, en especial la Ley 25.326 y las normas que resulten aplicables."
+        },
+        {
+          "type": "paragraph",
+          "text": "Para cualquier controversia, serán competentes los tribunales ordinarios de [CIUDAD Y PROVINCIA DE JURISDICCIÓN], con renuncia a cualquier otro fuero, salvo las normas de orden público que impidan esa prórroga (incluso, en su caso, las de defensa del consumidor)."
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "Contacto",
+      "slug": "seccion-13",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "13. Contacto"
+        },
+        {
+          "type": "paragraph",
+          "text": "Para consultas sobre el Portal o sobre estos términos: [EMAIL DE CONTACTO]. Domicilio: [DOMICILIO]."
+        }
+      ]
+    },
+    {
+      "number": null,
+      "title": "Ver también",
+      "slug": "ver-tambien",
+      "blocks": [
+        {
+          "type": "related_label",
+          "text": "TAMBIÉN TE PUEDE INTERESAR"
+        },
+        {
+          "type": "related_link",
+          "text": "Política de Privacidad →",
+          "href": "/privacidad"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "updatedAt": "21 de noviembre de 2026",
+    "version": "2026-11",
+    "effectiveFrom": "[FECHA DE PUBLICACIÓN]"
+  }
+}
