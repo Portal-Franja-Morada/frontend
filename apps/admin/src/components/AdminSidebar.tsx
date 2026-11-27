@@ -1,17 +1,8 @@
 import { cn } from "@franja/ui/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import type { AuthUser } from "../types/auth";
+import { adminNavItems, isAdminNavActive } from "../lib/admin-nav";
 import { adminDisplayName } from "../lib/user-display";
-
-const sidebarItems = [
-  { label: "Resumen", to: "/" },
-  { label: "Novedades", to: "/novedades" },
-  { label: "Eventos", to: "/eventos" },
-  { label: "Pendientes", to: "/pendientes" },
-  { label: "Importar padrón", to: "/importar-padron" },
-  { label: "Banco de apuntes", to: "/apuntes" },
-  { label: "Importar apuntes", to: "/importar-apuntes" },
-] as const;
+import type { AuthUser } from "../types/auth";
 
 type AdminSidebarProps = {
   user: AuthUser;
@@ -22,51 +13,58 @@ export function AdminSidebar({ user, onLogout }: AdminSidebarProps) {
   const location = useLocation();
 
   return (
-    <aside className="flex w-full shrink-0 flex-col gap-6 bg-white p-6 lg:w-[280px] lg:p-8">
-      <p className="text-xs font-bold uppercase tracking-wide text-franja-muted">
-        Centro de
-        <br />
-        estudiantes
-      </p>
-
-      <div>
-        <p className="text-xl font-bold text-franja-dark">Gestión del portal</p>
-        <nav className="mt-4 flex flex-col gap-3" aria-label="Menú de gestión">
-          {sidebarItems.map((item) => (
-            <Link
-              key={item.label}
-              to={item.to}
-              className={cn(
-                "text-sm font-bold",
-                location.pathname === item.to ||
-                  (item.to !== "/" && location.pathname.startsWith(item.to))
-                  ? "text-franja-morada"
-                  : "text-franja-dark",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-
-      <p className="text-xs font-bold uppercase tracking-wide text-franja-muted">
-        Contenido de ejemplo
-      </p>
-
-      <div className="mt-auto flex flex-col gap-4">
-        <p className="text-[13px] leading-snug text-franja-muted">
-          {adminDisplayName(user)}
+    <aside className="flex w-full shrink-0 px-5 py-8 lg:w-auto lg:px-8 lg:py-10">
+      <div className="flex w-full flex-col gap-3 rounded-xl bg-white p-5 lg:w-56">
+        <p className="text-xs font-bold uppercase tracking-wide text-franja-muted">
+          Centro de
           <br />
-          Administradora
+          estudiantes
         </p>
-        <button
-          type="button"
-          onClick={onLogout}
-          className="text-left text-sm font-bold text-franja-morada"
-        >
-          Cerrar sesión
-        </button>
+
+        <p className="text-xl font-bold leading-7 text-franja-morada">
+          Gestión del portal
+        </p>
+
+        <nav className="flex flex-col gap-3" aria-label="Menú de gestión">
+          {adminNavItems.map((item) => {
+            const isActive = isAdminNavActive(location.pathname, item.to);
+
+            return (
+              <Link
+                key={item.label}
+                to={item.to}
+                className={cn(
+                  "rounded-lg border px-[18px] py-[13px] text-sm font-bold",
+                  isActive
+                    ? "border-franja-morada bg-franja-morada text-white"
+                    : "border-franja-border bg-white text-franja-morada",
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="mt-auto flex flex-col gap-3">
+          <p className="text-xs font-bold uppercase tracking-wide text-franja-muted">
+            Contenido de ejemplo
+          </p>
+
+          <p className="text-[13px] font-normal leading-snug text-franja-muted">
+            {adminDisplayName(user)}
+            <br />
+            Administradora
+          </p>
+
+          <button
+            type="button"
+            onClick={onLogout}
+            className="text-left text-sm font-bold text-franja-morada"
+          >
+            Cerrar sesión
+          </button>
+        </div>
       </div>
     </aside>
   );
