@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { isNetworkError } from "../lib/api";
 import { fetchCurrentUser } from "../lib/auth-api";
+import { patchProfile, fetchProfile } from "../lib/profile-api";
 import {
   readPerfilDevState,
   type PerfilDevState,
@@ -101,6 +102,9 @@ export function usePerfilPage() {
   const [savedBanner, setSavedBanner] = useState(
     devState === "datos-guardados",
   );
+  const [perfilEmprendedor, setPerfilEmprendedor] = useState(false);
+  const [savingEmprendedor, setSavingEmprendedor] = useState(false);
+  const [emprendedorError, setEmprendedorError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (devState) {
@@ -112,7 +116,9 @@ export function usePerfilPage() {
         setLoadState("error");
         return;
       }
-      setUser(demoUser(devState));
+      const demo = demoUser(devState);
+      setUser(demo);
+      setPerfilEmprendedor(Boolean(demo.perfil));
       setLoadState("ready");
       return;
     }
@@ -125,6 +131,16 @@ export function usePerfilPage() {
         return;
       }
       setUser(me);
+      if (me.perfil) {
+        try {
+          const profile = await fetchProfile();
+          setPerfilEmprendedor(profile.preferencias.perfilEmprendedor);
+        } catch {
+          setPerfilEmprendedor(false);
+        }
+      } else {
+        setPerfilEmprendedor(false);
+      }
       setLoadState("ready");
     } catch (error) {
       if (isNetworkError(error)) {
@@ -134,6 +150,37 @@ export function usePerfilPage() {
       setLoadState("error");
     }
   }, [devState]);
+
+  const togglePerfilEmprendedor = useCallback(
+    async (checked: boolean) => {
+      setEmprendedorError(null);
+      setPerfilEmprendedor(checked);
+
+      if (devState) {
+        setSavedBanner(true);
+        return;
+      }
+
+      setSavingEmprendedor(true);
+      try {
+        const profile = await patchProfile({
+          preferencias: { perfilEmprendedor: checked },
+        });
+        setPerfilEmprendedor(profile.preferencias.perfilEmprendedor);
+        setSavedBanner(true);
+      } catch (error) {
+        setPerfilEmprendedor(!checked);
+        setEmprendedorError(
+          error instanceof Error
+            ? error.message
+            : "No pudimos guardar tu preferencia. Probá de nuevo.",
+        );
+      } finally {
+        setSavingEmprendedor(false);
+      }
+    },
+    [devState],
+  );
 
   useEffect(() => {
     void load();
@@ -146,5 +193,9 @@ export function usePerfilPage() {
     dismissSavedBanner: () => setSavedBanner(false),
     retry: load,
     devState,
+    perfilEmprendedor,
+    savingEmprendedor,
+    emprendedorError,
+    togglePerfilEmprendedor,
   };
 }

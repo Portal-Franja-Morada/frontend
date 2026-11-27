@@ -1,3 +1,5 @@
+import { cn } from "@franja/ui/lib/utils";
+import { type ReactNode, useState } from "react";
 import { Link } from "react-router-dom";
 import { StudentLayout } from "../components/StudentLayout";
 import { useAuth } from "../hooks/use-auth";
@@ -7,6 +9,7 @@ import {
   type VerificationGate,
 } from "../hooks/use-import-siu-page";
 import { getLandingSiteUrl } from "../lib/constants";
+import { historyPillClass } from "../lib/materia-display";
 import type { MeResponse } from "../types/auth";
 
 function formatFileSize(bytes: number): string {
@@ -37,90 +40,103 @@ export function ImportarSiuPage() {
       <section className="bg-franja-morada px-5 py-14 text-white lg:px-10 lg:py-16">
         <div className="w-full">
           <p className="text-[13px] text-white/90">
-            Inicio / Importar PDF del SIU
+            Inicio / Mi carrera / Importar PDF del SIU
           </p>
-          <h1 className="mt-3 whitespace-pre-line text-[26px] font-bold leading-tight lg:text-[36px]">
-            IMPORTÁ TU{"\n"}PDF DEL SIU.
+          <h1 className="mt-3 text-[26px] font-bold leading-tight lg:text-[36px]">
+            IMPORTÁ TU PDF DEL SIU.
           </h1>
-          <p className="mt-4 text-xs font-bold uppercase tracking-wide text-white/90">
-            Solo para alumnos verificados
-          </p>
         </div>
       </section>
 
       <section className="bg-franja-surface px-5 py-10 lg:px-10 lg:py-14">
-        <div className="w-full space-y-8">
-          <IntroCard />
-
-          <div className="rounded-xl bg-white p-6 shadow-sm lg:p-8">
+        <div className="flex w-full flex-col gap-8 lg:flex-row lg:items-start">
+          <div className="w-full min-w-0 flex-1 rounded-xl bg-white p-6 shadow-sm lg:max-w-[640px] lg:p-8">
             <SiuFileInput vm={vm} />
-            {vm.verificationGate &&
-            vm.verificationGate !== "verificado-prompt" ? (
-              <VerificationGateCard gate={vm.verificationGate} user={user} />
-            ) : vm.verificationGate === "verificado-prompt" &&
-              vm.uiState === "form" ? (
-              <div className="space-y-6">
-                <VerifiedPrompt onImport={vm.pickFile} />
-                <ImportForm
-                  selectedFile={vm.selectedFile}
-                  uiState={vm.uiState}
-                  onPickFile={vm.pickFile}
-                  onUpload={() => void handleUpload()}
-                />
-              </div>
-            ) : (
-              <ImportPanel vm={vm} onUpload={() => void handleUpload()} />
-            )}
+            <ImportCard
+              vm={vm}
+              user={user}
+              onUpload={() => void handleUpload()}
+            />
           </div>
-
-          <SiuGuideCard />
+          <SiuGuideCard className="w-full shrink-0 lg:w-[400px]" />
         </div>
       </section>
     </StudentLayout>
   );
 }
 
-function IntroCard() {
+function ImportCard({
+  vm,
+  user,
+  onUpload,
+}: {
+  vm: ReturnType<typeof useImportSiuPage>;
+  user: MeResponse | null;
+  onUpload: () => void;
+}) {
   return (
-    <div className="rounded-xl bg-white p-6 shadow-sm lg:p-8">
+    <div className="space-y-6">
       <p className="text-xs font-bold uppercase tracking-wide text-franja-morada">
-        Cargá tus materias desde el SIU
+        Solo para alumnos verificados
       </p>
-      <p className="mt-2 text-base text-franja-muted">
-        Subí el PDF que bajás del SIU Guaraní y cargamos tus materias y notas.
-      </p>
-      <div className="mt-6 space-y-4">
-        <StepCard
-          label="PRIMERO · OBLIGATORIO"
-          title="1. Plan de estudios"
-          description="Carga materias, estados y notas."
-        />
-        <StepCard
-          label="DESPUÉS · OPCIONAL"
-          title="2. Historial académico"
-          description="Suma aplazos y fechas."
-        />
+
+      <div className="space-y-2">
+        <p className="text-xs font-bold uppercase tracking-wide text-franja-morada">
+          Cargá tus materias desde el SIU
+        </p>
+        <p className="text-base text-franja-muted">
+          Subí el PDF que bajás del SIU Guaraní y cargamos tus materias y notas.
+        </p>
       </div>
+
+      <PdfsQueAceptamos />
+
+      {vm.verificationGate && vm.verificationGate !== "verificado-prompt" ? (
+        <VerificationGateCard gate={vm.verificationGate} user={user} />
+      ) : (
+        <ImportPanel vm={vm} onUpload={onUpload} />
+      )}
+    </div>
+  );
+}
+
+function PdfsQueAceptamos() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <StepCard
+        borderClass="border-[#D39630]"
+        label="PRIMERO · OBLIGATORIO"
+        title="1. Plan de estudios"
+        description="Carga materias, estados y notas."
+      />
+      <StepCard
+        borderClass="border-franja-border"
+        label="DESPUÉS · OPCIONAL"
+        title="2. Historial académico"
+        description="Suma aplazos y fechas."
+      />
     </div>
   );
 }
 
 function StepCard({
+  borderClass,
   label,
   title,
   description,
 }: {
+  borderClass: string;
   label: string;
   title: string;
   description: string;
 }) {
   return (
-    <div className="rounded-lg border border-franja-border p-4">
+    <div className={cn("rounded-[10px] border p-4", borderClass)}>
       <p className="text-[11px] font-bold uppercase tracking-wide text-franja-morada">
         {label}
       </p>
-      <p className="mt-1 text-base font-bold text-franja-dark">{title}</p>
-      <p className="mt-1 text-sm text-franja-muted">{description}</p>
+      <p className="mt-2 text-sm font-bold text-franja-dark">{title}</p>
+      <p className="mt-1 text-[13px] text-franja-muted">{description}</p>
     </div>
   );
 }
@@ -170,6 +186,7 @@ function ImportPanel({ vm, onUpload }: ImportPanelProps) {
 
   return (
     <ImportForm
+      vm={vm}
       selectedFile={vm.selectedFile}
       uiState={vm.uiState}
       onPickFile={vm.pickFile}
@@ -194,53 +211,109 @@ function SiuFileInput({ vm }: { vm: ReturnType<typeof useImportSiuPage> }) {
 }
 
 function ImportForm({
+  vm,
   selectedFile,
   uiState,
   onPickFile,
   onUpload,
 }: {
+  vm: ReturnType<typeof useImportSiuPage>;
   selectedFile: File | null;
   uiState: ImportUiState;
   onPickFile: () => void;
   onUpload: () => void;
 }) {
+  const [dragOver, setDragOver] = useState(false);
+
+  const handleDrop = (file: File | undefined) => {
+    setDragOver(false);
+    if (file) vm.onFileChange(file);
+  };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="text-base font-bold text-franja-dark lg:hidden">
-          Elegí tu PDF desde tu celular
+    <div className="space-y-4">
+      <div
+        className={cn(
+          "rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors",
+          dragOver
+            ? "border-franja-morada bg-franja-surface"
+            : "border-franja-border bg-white",
+        )}
+        onDragEnter={(event) => {
+          event.preventDefault();
+          setDragOver(true);
+        }}
+        onDragOver={(event) => {
+          event.preventDefault();
+          setDragOver(true);
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(event) => {
+          event.preventDefault();
+          handleDrop(event.dataTransfer.files[0]);
+        }}
+      >
+        <PdfIcon className="mx-auto text-franja-morada" />
+        <p className="mt-4 text-base font-bold text-franja-dark">
+          Arrastrá tu PDF acá o elegilo desde tu compu
         </p>
-        <p className="hidden text-base font-bold text-franja-dark lg:block">
-          Elegí tu PDF
-        </p>
-        <p className="mt-1 text-sm text-franja-muted">
+        <p className="mt-2 text-sm text-franja-muted">
           Solo PDF, hasta 2 MB
           {selectedFile ? ` · ${selectedFile.name}` : ""}
         </p>
-      </div>
-
-      <div className="flex flex-col gap-3 sm:flex-row">
         <button
           type="button"
           onClick={onPickFile}
-          className="flex h-12 flex-1 items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada"
+          className="mt-6 inline-flex h-11 items-center justify-center rounded-lg border border-franja-border bg-white px-5 text-sm font-bold text-franja-morada"
         >
           Elegir archivo
         </button>
-        <button
-          type="button"
-          onClick={onUpload}
-          disabled={uiState === "processing"}
-          className="flex h-12 flex-1 items-center justify-center rounded-lg bg-franja-morada text-sm font-bold text-white disabled:opacity-60"
-        >
-          Subir
-        </button>
       </div>
+
+      <button
+        type="button"
+        onClick={onUpload}
+        disabled={uiState === "processing"}
+        className="flex h-12 w-full items-center justify-center rounded-lg bg-franja-morada text-sm font-bold text-white disabled:opacity-60"
+      >
+        Subir
+      </button>
 
       <p className="text-[13px] text-franja-muted">
         Tu PDF no se guarda: solo lo leemos para cargar tus datos.
       </p>
     </div>
+  );
+}
+
+function PdfIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="40"
+      height="48"
+      viewBox="0 0 40 48"
+      fill="none"
+      className={className}
+      aria-hidden
+    >
+      <path
+        d="M8 2h16l8 8v34a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path d="M24 2v8h8" stroke="currentColor" strokeWidth="2" />
+      <text
+        x="20"
+        y="34"
+        textAnchor="middle"
+        fill="currentColor"
+        fontSize="11"
+        fontWeight="700"
+        fontFamily="Montserrat, sans-serif"
+      >
+        PDF
+      </text>
+    </svg>
   );
 }
 
@@ -314,10 +387,10 @@ function SuccessCard({
       ) : null}
 
       <Link
-        to="/historial"
+        to={variant === "plan" ? "/mi-carrera" : "/historial"}
         className="inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-6 text-sm font-bold text-white"
       >
-        Ver mi historial
+        {variant === "plan" ? "Ver mi carrera" : "Ver mi historial"}
       </Link>
     </div>
   );
@@ -345,7 +418,7 @@ function ErrorCard({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-6 text-sm font-bold text-white"
+          className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-franja-morada px-6 text-sm font-bold text-white sm:w-auto"
         >
           Reintentar
         </button>
@@ -356,7 +429,7 @@ function ErrorCard({
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-6 text-sm font-bold text-white"
+          className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-franja-morada px-6 text-sm font-bold text-white sm:w-auto"
         >
           Subir primero mi plan
         </button>
@@ -369,7 +442,7 @@ function ErrorCard({
       <button
         type="button"
         onClick={onChooseFile}
-        className="inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-6 text-sm font-bold text-white"
+        className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-franja-morada px-6 text-sm font-bold text-white sm:w-auto"
       >
         Elegir otro archivo
       </button>
@@ -510,27 +583,6 @@ function VerificationGateCard({
   );
 }
 
-function VerifiedPrompt({ onImport }: { onImport: () => void }) {
-  return (
-    <div className="space-y-3 border-b border-franja-border pb-6">
-      <p className="text-xs font-bold uppercase tracking-wide text-franja-morada">
-        Cuenta verificada
-      </p>
-      <p className="text-xl font-bold text-franja-dark">Ya podés importar</p>
-      <p className="text-base text-franja-muted">
-        Subí el PDF de tu plan o de tu historial del SIU.
-      </p>
-      <button
-        type="button"
-        onClick={onImport}
-        className="inline-flex h-12 items-center justify-center rounded-lg border border-franja-border bg-white px-6 text-sm font-bold text-franja-morada"
-      >
-        Importar PDF del SIU
-      </button>
-    </div>
-  );
-}
-
 function rejectionReason(user: MeResponse | null): string {
   if (user?.verificacion.motivoRechazo) return user.verificacion.motivoRechazo;
   if (user?.verificacion.motivo === "dni_no_en_padron") {
@@ -542,11 +594,21 @@ function rejectionReason(user: MeResponse | null): string {
   return "revisá tus datos y volvé a enviar";
 }
 
-function SiuGuideCard() {
+function SiuGuideCard({ className }: { className?: string }) {
   return (
-    <div className="rounded-xl bg-white p-6 shadow-sm lg:p-8">
-      <p className="text-xs font-bold uppercase tracking-wide text-franja-morada">
-        Cómo bajar tus PDFs del SIU Guaraní
+    <GuidePanel className={className}>
+      <p className="mb-4">
+        <span
+          className={cn(
+            historyPillClass,
+            "bg-[#FAF8F6] text-franja-muted",
+          )}
+        >
+          CONTENIDO PENDIENTE
+        </span>
+      </p>
+      <p className="whitespace-pre-line text-xs font-bold uppercase tracking-wide text-franja-morada">
+        CÓMO BAJAR TUS PDFS{"\n"}DEL SIU GUARANÍ
       </p>
       <ol className="mt-6 space-y-4">
         {[1, 2, 3].map((step) => (
@@ -563,6 +625,25 @@ function SiuGuideCard() {
       <p className="mt-6 text-[13px] text-franja-muted">
         Los pasos dentro del SIU se completan cuando estén confirmados.
       </p>
+    </GuidePanel>
+  );
+}
+
+function GuidePanel({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-xl border border-franja-border bg-white p-6 shadow-sm lg:p-8",
+        className,
+      )}
+    >
+      {children}
     </div>
   );
 }

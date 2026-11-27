@@ -8,29 +8,60 @@ import { StudentLayout } from "../components/StudentLayout";
 import { useAuth } from "../hooks/use-auth";
 import { usePerfilPage } from "../hooks/use-perfil-page";
 import { getLandingSiteUrl } from "../lib/constants";
-import type { MeResponse } from "../types/auth";
+import { historyPillClass } from "../lib/materia-display";
+import type { MeResponse, StudentCareer } from "../types/auth";
 
-function accountBadge(user: MeResponse): { label: string; className: string } {
+function accountBadge(user: MeResponse): { label: string; pillClass: string } {
   if (!user.emailVerificado) {
-    return { label: "CONFIRMÁ TU EMAIL", className: "text-franja-muted" };
+    return {
+      label: "CONFIRMÁ TU EMAIL",
+      pillClass: "bg-[#FAF8F6] text-franja-muted",
+    };
   }
   if (!user.perfil || user.verificacion.estado === "sin_enviar") {
-    return { label: "SIN VERIFICAR", className: "text-franja-error" };
+    return {
+      label: "SIN VERIFICAR",
+      pillClass: "border border-franja-border bg-white text-franja-error",
+    };
   }
   if (user.perfil.estadoVerificacion === "pendiente") {
-    return { label: "EN REVISIÓN", className: "text-franja-morada" };
+    return {
+      label: "EN REVISIÓN",
+      pillClass: "bg-[#F6ECF0] text-franja-dark",
+    };
   }
   if (user.perfil.estadoVerificacion === "verificado") {
-    return { label: "CUENTA VERIFICADA", className: "text-franja-morada" };
+    return {
+      label: "CUENTA VERIFICADA",
+      pillClass: "bg-[#EDF6F0] text-[#246448]",
+    };
   }
-  return { label: "SIN VERIFICAR", className: "text-franja-error" };
+  return {
+    label: "SIN VERIFICAR",
+    pillClass: "border border-franja-border bg-white text-franja-error",
+  };
+}
+
+function userInitials(user: MeResponse): string {
+  const perfil = user.perfil;
+  if (perfil?.nombre && perfil.apellido) {
+    return `${perfil.nombre[0] ?? ""}${perfil.apellido[0] ?? ""}`.toUpperCase();
+  }
+  if (perfil?.nombreParaMostrar) {
+    const parts = perfil.nombreParaMostrar.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      return `${parts[0]![0] ?? ""}${parts[1]![0] ?? ""}`.toUpperCase();
+    }
+    if (parts[0]) return parts[0].slice(0, 2).toUpperCase();
+  }
+  return user.email.slice(0, 2).toUpperCase();
 }
 
 function showAcademicBlock(user: MeResponse): boolean {
   return Boolean(
     user.emailVerificado &&
-    user.perfil &&
-    user.perfil.estadoVerificacion === "verificado",
+      user.perfil &&
+      user.perfil.estadoVerificacion === "verificado",
   );
 }
 
@@ -40,8 +71,18 @@ function hasAcademicData(user: MeResponse): boolean {
 
 export function PerfilPage() {
   const { logout } = useAuth();
-  const { loadState, user, savedBanner, dismissSavedBanner, retry, devState } =
-    usePerfilPage();
+  const {
+    loadState,
+    user,
+    savedBanner,
+    dismissSavedBanner,
+    retry,
+    devState,
+    perfilEmprendedor,
+    savingEmprendedor,
+    emprendedorError,
+    togglePerfilEmprendedor,
+  } = usePerfilPage();
   const [logoutOpen, setLogoutOpen] = useState(
     devState === "confirmar-cierre-sesion",
   );
@@ -74,7 +115,17 @@ export function PerfilPage() {
               onRetry={() => void retry()}
             />
           ) : (
-            <ProfileContent user={user} onLogout={() => setLogoutOpen(true)} />
+            <ProfileContent
+              user={user}
+              showDemoBadge={Boolean(import.meta.env.DEV && devState)}
+              onLogout={() => setLogoutOpen(true)}
+              perfilEmprendedor={perfilEmprendedor}
+              savingEmprendedor={savingEmprendedor}
+              emprendedorError={emprendedorError}
+              onPerfilEmprendedorChange={(checked) =>
+                void togglePerfilEmprendedor(checked)
+              }
+            />
           )}
         </div>
       </section>
@@ -92,14 +143,21 @@ export function PerfilPage() {
 
 function ProfileContent({
   user,
+  showDemoBadge,
   onLogout,
+  perfilEmprendedor,
+  savingEmprendedor,
+  emprendedorError,
+  onPerfilEmprendedorChange,
 }: {
   user: MeResponse;
+  showDemoBadge: boolean;
   onLogout: () => void;
+  perfilEmprendedor: boolean;
+  savingEmprendedor: boolean;
+  emprendedorError: string | null;
+  onPerfilEmprendedorChange: (checked: boolean) => void;
 }) {
-  const badge = accountBadge(user);
-  const displayName = user.perfil?.nombreParaMostrar ?? "Sin nombre cargado";
-
   return (
     <div className="flex flex-col gap-6">
       {!user.emailVerificado ? <EmailBanner email={user.email} /> : null}
@@ -109,27 +167,35 @@ function ProfileContent({
       ) : null}
 
       {!user.perfil || user.verificacion.estado === "sin_enviar" ? (
-        !user.emailVerificado ? null : (
-          <VerificationIncompleteBanner />
-        )
+        !user.emailVerificado ? null : <VerificationIncompleteBanner />
       ) : null}
 
-      <IdentityCard
-        name={displayName}
-        email={user.email}
-        badge={badge}
-        onLogout={onLogout}
-      />
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <IdentityCard user={user} onLogout={onLogout} />
 
-      {showAcademicBlock(user) ? (
-        hasAcademicData(user) ? (
-          <CareersSection carreras={user.perfil!.carreras} />
-        ) : (
-          <NoAcademicDataCard />
-        )
-      ) : null}
+        <div className="flex min-w-0 flex-1 flex-col gap-6">
+          {showAcademicBlock(user) ? (
+            hasAcademicData(user) ? (
+              <CareersSection
+                carreras={user.perfil!.carreras}
+                showDemoBadge={showDemoBadge}
+              />
+            ) : (
+              <NoAcademicDataCard />
+            )
+          ) : null}
 
-      <DataAndDeletionSection />
+          {user.perfil ? (
+            <EmprendedorSection
+              checked={perfilEmprendedor}
+              saving={savingEmprendedor}
+              error={emprendedorError}
+              onChange={onPerfilEmprendedorChange}
+            />
+          ) : null}
+          <DataAndDeletionSection />
+        </div>
+      </div>
     </div>
   );
 }
@@ -189,43 +255,47 @@ function VerificationIncompleteBanner() {
 }
 
 function IdentityCard({
-  name,
-  email,
-  badge,
+  user,
   onLogout,
 }: {
-  name: string;
-  email: string;
-  badge: { label: string; className: string };
+  user: MeResponse;
   onLogout: () => void;
 }) {
+  const badge = accountBadge(user);
+  const displayName = user.perfil?.nombreParaMostrar ?? "Sin nombre cargado";
+  const initials = userInitials(user);
+
   return (
-    <div className="rounded-xl bg-white p-6 shadow-sm lg:p-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <p className="text-2xl font-bold text-franja-dark">{name}</p>
-          <p className="mt-1 text-base text-franja-muted">{email}</p>
-          <p
-            className={cn(
-              "mt-3 text-xs font-bold uppercase tracking-wide",
-              badge.className,
-            )}
-          >
-            {badge.label}
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
-          <span className="flex h-[50px] items-center justify-center rounded-lg border border-franja-border bg-white px-5 text-sm font-bold text-franja-morada">
-            Editar datos
-          </span>
-          <button
-            type="button"
-            onClick={onLogout}
-            className="flex h-[50px] items-center justify-center rounded-lg border border-franja-border bg-white px-5 text-sm font-bold text-franja-morada"
-          >
-            Cerrar sesión
-          </button>
-        </div>
+    <div className="w-full shrink-0 rounded-xl bg-white p-6 shadow-sm lg:w-[380px] lg:p-8">
+      <div className="flex h-16 w-16 items-center justify-center rounded-[32px] bg-franja-morada text-xl font-bold text-white">
+        {initials}
+      </div>
+
+      <div className="mt-6 space-y-1">
+        <p className="text-xl font-bold text-franja-dark">{displayName}</p>
+        <p className="text-[13px] text-franja-muted">{user.email}</p>
+      </div>
+
+      <p className="mt-4">
+        <span className={cn(historyPillClass, badge.pillClass)}>{badge.label}</span>
+      </p>
+
+      <hr className="mt-6 border-franja-border" />
+
+      <div className="mt-6 flex flex-col gap-3">
+        <Link
+          to="/mis-datos"
+          className="flex h-[50px] w-full items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada"
+        >
+          Editar datos
+        </Link>
+        <button
+          type="button"
+          onClick={onLogout}
+          className="flex h-[50px] w-full items-center justify-center rounded-lg border border-franja-border bg-white text-sm font-bold text-franja-morada"
+        >
+          Cerrar sesión
+        </button>
       </div>
     </div>
   );
@@ -233,32 +303,38 @@ function IdentityCard({
 
 function CareersSection({
   carreras,
+  showDemoBadge,
 }: {
-  carreras: NonNullable<MeResponse["perfil"]>["carreras"];
+  carreras: StudentCareer[];
+  showDemoBadge: boolean;
 }) {
+  const note = showDemoBadge
+    ? "Carreras y planes de ejemplo. El plan se asigna solo al importar el PDF del plan del SIU."
+    : "El plan se asigna al importar el PDF del plan del SIU.";
+
   return (
     <div className="rounded-xl bg-white p-6 shadow-sm lg:p-8">
       <p className="text-xs font-bold uppercase tracking-wide text-franja-morada">
-        CARRERAS
+        Carreras
       </p>
-      <div className="mt-4 space-y-6">
+
+      <ul className="mt-4 divide-y divide-franja-border">
         {carreras.map((career) => (
-          <div
-            key={career.slug}
-            className="border-b border-franja-border pb-6 last:border-0 last:pb-0"
-          >
-            <p className="text-xl font-bold text-franja-dark">
+          <li key={career.slug} className="py-4 first:pt-0 last:pb-0">
+            <p className="text-base font-bold text-franja-dark">
               {career.nombre}
             </p>
-            <p className="mt-1 text-base text-franja-muted">
-              {career.anioPlan ? `Plan ${career.anioPlan}` : "Plan sin definir"}
+            <p className="mt-1 text-[13px] text-franja-muted">
+              {career.anioPlan
+                ? `Plan ${career.anioPlan}`
+                : "Plan sin definir"}
             </p>
-          </div>
+          </li>
         ))}
-      </div>
-      <p className="mt-6 text-[13px] text-franja-muted">
-        El plan se asigna al importar el PDF del plan del SIU.
-      </p>
+      </ul>
+
+      <p className="mt-6 text-[13px] text-franja-muted">{note}</p>
+
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         <Link
           to="/mis-carreras"
@@ -300,11 +376,57 @@ function NoAcademicDataCard() {
   );
 }
 
+function EmprendedorSection({
+  checked,
+  saving,
+  error,
+  onChange,
+}: {
+  checked: boolean;
+  saving: boolean;
+  error: string | null;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="rounded-2xl bg-white p-6 shadow-sm lg:p-8">
+      <p className="text-xs font-bold uppercase tracking-wide text-franja-morada">
+        Perfil emprendedor · opcional
+      </p>
+      <label
+        className={cn(
+          "mt-4 flex items-start gap-3",
+          saving ? "cursor-wait opacity-70" : "cursor-pointer",
+        )}
+      >
+        <input
+          type="checkbox"
+          checked={checked}
+          disabled={saving}
+          onChange={(event) => onChange(event.target.checked)}
+          className="mt-1 size-4 rounded border-franja-border accent-franja-morada"
+        />
+        <span>
+          <span className="block text-sm font-bold text-franja-dark">
+            Tengo un emprendimiento
+          </span>
+          <span className="mt-1 block text-sm text-franja-muted">
+            Marcalo para recibir convocatorias a ferias de emprendedores. Podés
+            cambiarlo cuando quieras.
+          </span>
+        </span>
+      </label>
+      {error ? (
+        <p className="mt-3 text-sm text-franja-error">{error}</p>
+      ) : null}
+    </div>
+  );
+}
+
 function DataAndDeletionSection() {
   return (
     <div className="rounded-xl bg-white p-6 shadow-sm lg:p-8">
       <p className="text-xs font-bold uppercase tracking-wide text-franja-morada">
-        MIS DATOS Y BAJA
+        Mis datos y baja
       </p>
       <p className="mt-2 text-base text-franja-muted">
         Descargá una copia de tus datos o da de baja tu cuenta.
