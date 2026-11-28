@@ -16,7 +16,12 @@ import {
   publishEvent,
   updateEvent,
 } from "../lib/events-api";
-import type { AdminEvent, ContentEstado } from "../types/content";
+import type {
+  AdminEvent,
+  ContentEstado,
+  GaleriaImagen,
+} from "../types/content";
+import { useEditorGallery } from "./use-editor-gallery";
 import { useEditorImage } from "./use-editor-image";
 import { useUnsavedImageGuard } from "./use-unsaved-image-guard";
 
@@ -77,7 +82,7 @@ function resolveDataState(
   return "ok";
 }
 
-function buildPayload(form: FormState) {
+function buildPayload(form: FormState, galeria: GaleriaImagen[]) {
   const inicio = argentinaLocalToIso(form.fecha, form.horaInicio);
   const fin = form.horaFin
     ? argentinaLocalToIso(form.fecha, form.horaFin)
@@ -90,6 +95,7 @@ function buildPayload(form: FormState) {
     fin,
     imagenUrl: form.imagenUrl,
     imagenPublicId: form.imagenPublicId,
+    galeria,
   };
 }
 
@@ -157,8 +163,22 @@ export function useEventEditor() {
     clearSaveError,
   } = useEditorImage("evento");
 
+  const {
+    items: galleryItems,
+    previewUrls: galleryPreviewUrls,
+    galleryError,
+    hasUnsavedGallery,
+    setFromSaved: setGalleryFromSaved,
+    addFiles: addGalleryFiles,
+    removeAt: removeGalleryAt,
+    move: moveGalleryItem,
+    ensureGalleryUploaded,
+    markGalleryCommitted,
+    clearGalleryError,
+  } = useEditorGallery("evento");
+
   const { confirmLeave } = useUnsavedImageGuard(
-    hasUnsavedImage && !previewDataState,
+    (hasUnsavedImage || hasUnsavedGallery) && !previewDataState,
   );
 
   const applyImageFields = useCallback((patch: Partial<FormState>) => {
@@ -185,12 +205,13 @@ export function useEventEditor() {
       setEventId(event.id);
       setEstado(event.estado);
       setForm(eventToForm(event));
+      setGalleryFromSaved(event.galeria ?? []);
       setLastSavedAt(new Date(event.updatedAt));
       setFetchState("ok");
     } catch {
       setFetchState("error");
     }
-  }, [id, mode]);
+  }, [id, mode, setGalleryFromSaved]);
 
   useEffect(() => {
     if (previewDataState) {
@@ -198,6 +219,12 @@ export function useEventEditor() {
     }
     void loadEvent();
   }, [loadEvent, previewDataState]);
+
+  useEffect(() => {
+    if (seeded && seeded.id === id) {
+      setGalleryFromSaved(seeded.galeria ?? []);
+    }
+  }, [id, seeded, setGalleryFromSaved]);
 
   const applyForm = useCallback((patch: Partial<FormState>) => {
     setForm((current) => ({ ...current, ...patch }));
@@ -216,21 +243,30 @@ export function useEventEditor() {
     }
     setBusy(true);
     clearSaveError();
+    clearGalleryError();
     try {
       const formForSave = await ensureImageUploaded(form, applyImageFields);
       if (!formForSave) {
         return null;
       }
+      const galeriaForSave = await ensureGalleryUploaded();
+      if (galeriaForSave === null) {
+        return null;
+      }
 
-      const payload = buildPayload({ ...form, ...formForSave });
+      const payload = buildPayload({ ...form, ...formForSave }, galeriaForSave);
       if (eventId) {
         const event = await updateEvent(eventId, payload);
+        setGalleryFromSaved(event.galeria ?? []);
+        markGalleryCommitted();
         setLastSavedAt(new Date(event.updatedAt));
         setEstado(event.estado);
         return event;
       }
       const event = await createEvent(payload);
       setEventId(event.id);
+      setGalleryFromSaved(event.galeria ?? []);
+      markGalleryCommitted();
       setLastSavedAt(new Date(event.updatedAt));
       setEstado(event.estado);
       navigate(`/eventos/${event.id}/editar`, {
@@ -246,12 +282,16 @@ export function useEventEditor() {
     }
   }, [
     applyImageFields,
+    clearGalleryError,
     clearSaveError,
+    ensureGalleryUploaded,
     ensureImageUploaded,
     eventId,
     form,
+    markGalleryCommitted,
     markSaveFailed,
     navigate,
+    setGalleryFromSaved,
   ]);
 
   const handleSaveDraft = useCallback(() => {
@@ -274,6 +314,7 @@ export function useEventEditor() {
     }
     setBusy(true);
     clearSaveError();
+    clearGalleryError();
     try {
       const formForSave = await ensureImageUploaded(form, applyImageFields);
       if (!formForSave || !formForSave.imagenUrl) {
@@ -281,19 +322,28 @@ export function useEventEditor() {
         setShowValidation(true);
         return;
       }
+      const galeriaForSave = await ensureGalleryUploaded();
+      if (galeriaForSave === null) {
+        setUiState(null);
+        return;
+      }
 
-      const payload = buildPayload({ ...form, ...formForSave });
+      const payload = buildPayload({ ...form, ...formForSave }, galeriaForSave);
       let currentId = eventId;
       if (!currentId) {
         const created = await createEvent(payload);
         currentId = created.id;
         setEventId(created.id);
+        setGalleryFromSaved(created.galeria ?? []);
+        markGalleryCommitted();
         navigate(`/eventos/${created.id}/editar`, {
           replace: true,
           state: { event: created },
         });
       } else {
         const updated = await updateEvent(currentId, payload);
+        setGalleryFromSaved(updated.galeria ?? []);
+        markGalleryCommitted();
         setLastSavedAt(new Date(updated.updatedAt));
       }
       const published = await publishEvent(currentId);
@@ -308,13 +358,17 @@ export function useEventEditor() {
     }
   }, [
     applyImageFields,
+    clearGalleryError,
     clearSaveError,
+    ensureGalleryUploaded,
     ensureImageUploaded,
     eventId,
     form,
     imageReady,
+    markGalleryCommitted,
     markSaveFailed,
     navigate,
+    setGalleryFromSaved,
   ]);
 
   const handleImageChange = useCallback(
@@ -330,7 +384,7 @@ export function useEventEditor() {
 
   const handleCancelNavigate = useCallback(
     (event: { preventDefault: () => void }) => {
-      if (!hasUnsavedImage) {
+      if (!hasUnsavedImage && !hasUnsavedGallery) {
         return;
       }
       event.preventDefault();
@@ -338,7 +392,7 @@ export function useEventEditor() {
         navigate("/eventos");
       }
     },
-    [confirmLeave, hasUnsavedImage, navigate],
+    [confirmLeave, hasUnsavedGallery, hasUnsavedImage, navigate],
   );
 
   const retry = useCallback(() => {
@@ -361,8 +415,15 @@ export function useEventEditor() {
     busy,
     imageError,
     saveError,
+    galleryError,
+    galleryItems,
+    galleryPreviewUrls,
     imagePreviewUrl: previewUrl(form.imagenUrl),
     hasImage: imageReady,
+    addGalleryFiles,
+    removeGalleryAt,
+    moveGalleryUp: (index: number) => moveGalleryItem(index, -1),
+    moveGalleryDown: (index: number) => moveGalleryItem(index, 1),
     lastSavedLabel: lastSavedAt
       ? `Guardado por última vez a las ${formatLastSavedTime(lastSavedAt)} h`
       : null,

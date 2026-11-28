@@ -20,6 +20,7 @@ export type PostDetailView = {
   body: string;
   image: string;
   imageAlt: string;
+  gallery: string[];
   publishedAtLabel: string;
 };
 
@@ -36,6 +37,7 @@ function mapPostDetail(post: PublicPostDetail): PostDetailView {
     body: post.cuerpo,
     image: post.imagenUrl ?? DEFAULT_NEWS_IMAGE,
     imageAlt: post.titulo,
+    gallery: post.galeria.map((item) => item.url),
     publishedAtLabel: formatPostDateLong(post.publicadoAt),
   };
 }

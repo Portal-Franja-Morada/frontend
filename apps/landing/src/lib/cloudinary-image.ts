@@ -21,11 +21,7 @@ function afterUploadPath(pathname: string): string | null {
 }
 
 function hasExistingTransforms(afterUpload: string): boolean {
-  const parts = afterUpload.split("/");
-  const first = parts[0] ?? "";
-  if (/^v\d+$/.test(first)) {
-    return transformSegment(parts[1] ?? "");
-  }
+  const first = afterUpload.split("/")[0] ?? "";
   return transformSegment(first);
 }
 
@@ -45,11 +41,10 @@ function insertTransform(pathname: string, width: number): string | null {
   const transform = buildTransform(width);
   const markerIndex = pathname.indexOf(UPLOAD_MARKER);
   const prefix = pathname.slice(0, markerIndex + UPLOAD_MARKER.length);
-  const versionMatch = afterUpload.match(/^v\d+\//);
+  const versionMatch = afterUpload.match(/^(v\d+\/)(.*)/);
 
   if (versionMatch) {
-    const rest = afterUpload.slice(versionMatch[0].length);
-    return `${prefix}${versionMatch[0]}${transform}/${rest}`;
+    return `${prefix}${transform}/${versionMatch[1]}${versionMatch[2]}`;
   }
 
   return `${prefix}${transform}/${afterUpload}`;

@@ -11,7 +11,8 @@ import {
   publishPost,
   updatePost,
 } from "../lib/posts-api";
-import type { AdminPost, ContentEstado } from "../types/content";
+import type { AdminPost, ContentEstado, GaleriaImagen } from "../types/content";
+import { useEditorGallery } from "./use-editor-gallery";
 import { useEditorImage } from "./use-editor-image";
 import { useUnsavedImageGuard } from "./use-unsaved-image-guard";
 
@@ -51,13 +52,14 @@ function resolveDataState(
   return "ok";
 }
 
-function buildPayload(form: FormState) {
+function buildPayload(form: FormState, galeria: GaleriaImagen[]) {
   return {
     titulo: form.titulo.trim(),
     resumen: deriveResumen(form.cuerpo),
     cuerpo: form.cuerpo.trim(),
     imagenUrl: form.imagenUrl,
     imagenPublicId: form.imagenPublicId,
+    galeria,
   };
 }
 
@@ -116,8 +118,22 @@ export function usePostEditor() {
     clearSaveError,
   } = useEditorImage("novedad");
 
+  const {
+    items: galleryItems,
+    previewUrls: galleryPreviewUrls,
+    galleryError,
+    hasUnsavedGallery,
+    setFromSaved: setGalleryFromSaved,
+    addFiles: addGalleryFiles,
+    removeAt: removeGalleryAt,
+    move: moveGalleryItem,
+    ensureGalleryUploaded,
+    markGalleryCommitted,
+    clearGalleryError,
+  } = useEditorGallery("novedad");
+
   const { confirmLeave } = useUnsavedImageGuard(
-    hasUnsavedImage && !previewDataState,
+    (hasUnsavedImage || hasUnsavedGallery) && !previewDataState,
   );
 
   const applyImageFields = useCallback((patch: Partial<FormState>) => {
@@ -149,12 +165,13 @@ export function usePostEditor() {
         imagenUrl: post.imagenUrl,
         imagenPublicId: post.imagenPublicId,
       });
+      setGalleryFromSaved(post.galeria ?? []);
       setLastSavedAt(new Date(post.updatedAt));
       setFetchState("ok");
     } catch {
       setFetchState("error");
     }
-  }, [id, mode]);
+  }, [id, mode, setGalleryFromSaved]);
 
   useEffect(() => {
     if (previewDataState) {
@@ -162,6 +179,12 @@ export function usePostEditor() {
     }
     void loadPost();
   }, [loadPost, previewDataState]);
+
+  useEffect(() => {
+    if (seeded && seeded.id === id) {
+      setGalleryFromSaved(seeded.galeria ?? []);
+    }
+  }, [id, seeded, setGalleryFromSaved]);
 
   const applyForm = useCallback((patch: Partial<FormState>) => {
     setForm((current) => ({ ...current, ...patch }));
@@ -174,21 +197,30 @@ export function usePostEditor() {
     }
     setBusy(true);
     clearSaveError();
+    clearGalleryError();
     try {
       const formForSave = await ensureImageUploaded(form, applyImageFields);
       if (!formForSave) {
         return null;
       }
+      const galeriaForSave = await ensureGalleryUploaded();
+      if (galeriaForSave === null) {
+        return null;
+      }
 
-      const payload = buildPayload({ ...form, ...formForSave });
+      const payload = buildPayload({ ...form, ...formForSave }, galeriaForSave);
       if (postId) {
         const post = await updatePost(postId, payload);
+        setGalleryFromSaved(post.galeria ?? []);
+        markGalleryCommitted();
         setLastSavedAt(new Date(post.updatedAt));
         setEstado(post.estado);
         return post;
       }
       const post = await createPost(payload);
       setPostId(post.id);
+      setGalleryFromSaved(post.galeria ?? []);
+      markGalleryCommitted();
       setLastSavedAt(new Date(post.updatedAt));
       setEstado(post.estado);
       navigate(`/novedades/${post.id}/editar`, {
@@ -204,12 +236,16 @@ export function usePostEditor() {
     }
   }, [
     applyImageFields,
+    clearGalleryError,
     clearSaveError,
+    ensureGalleryUploaded,
     ensureImageUploaded,
     form,
+    markGalleryCommitted,
     markSaveFailed,
     navigate,
     postId,
+    setGalleryFromSaved,
   ]);
 
   const handleSaveDraft = useCallback(() => {
@@ -232,6 +268,7 @@ export function usePostEditor() {
     }
     setBusy(true);
     clearSaveError();
+    clearGalleryError();
     try {
       const formForSave = await ensureImageUploaded(form, applyImageFields);
       if (!formForSave || !formForSave.imagenUrl) {
@@ -239,19 +276,28 @@ export function usePostEditor() {
         setShowValidation(true);
         return;
       }
+      const galeriaForSave = await ensureGalleryUploaded();
+      if (galeriaForSave === null) {
+        setUiState(null);
+        return;
+      }
 
-      const payload = buildPayload({ ...form, ...formForSave });
+      const payload = buildPayload({ ...form, ...formForSave }, galeriaForSave);
       let currentId = postId;
       if (!currentId) {
         const created = await createPost(payload);
         currentId = created.id;
         setPostId(created.id);
+        setGalleryFromSaved(created.galeria ?? []);
+        markGalleryCommitted();
         navigate(`/novedades/${created.id}/editar`, {
           replace: true,
           state: { post: created },
         });
       } else {
         const updated = await updatePost(currentId, payload);
+        setGalleryFromSaved(updated.galeria ?? []);
+        markGalleryCommitted();
         setLastSavedAt(new Date(updated.updatedAt));
       }
       const published = await publishPost(currentId);
@@ -266,13 +312,17 @@ export function usePostEditor() {
     }
   }, [
     applyImageFields,
+    clearGalleryError,
     clearSaveError,
+    ensureGalleryUploaded,
     ensureImageUploaded,
     form,
     hasImage,
+    markGalleryCommitted,
     markSaveFailed,
     navigate,
     postId,
+    setGalleryFromSaved,
   ]);
 
   const handleImageChange = useCallback(
@@ -288,7 +338,7 @@ export function usePostEditor() {
 
   const handleCancelNavigate = useCallback(
     (event: { preventDefault: () => void }) => {
-      if (!hasUnsavedImage) {
+      if (!hasUnsavedImage && !hasUnsavedGallery) {
         return;
       }
       event.preventDefault();
@@ -296,7 +346,7 @@ export function usePostEditor() {
         navigate("/novedades");
       }
     },
-    [confirmLeave, hasUnsavedImage, navigate],
+    [confirmLeave, hasUnsavedGallery, hasUnsavedImage, navigate],
   );
 
   const retry = useCallback(() => {
@@ -319,8 +369,15 @@ export function usePostEditor() {
     busy,
     imageError,
     saveError,
+    galleryError,
+    galleryItems,
+    galleryPreviewUrls,
     imagePreviewUrl: previewUrl(form.imagenUrl),
     hasImage: hasImage(form),
+    addGalleryFiles,
+    removeGalleryAt,
+    moveGalleryUp: (index: number) => moveGalleryItem(index, -1),
+    moveGalleryDown: (index: number) => moveGalleryItem(index, 1),
     lastSavedLabel: lastSavedAt
       ? `Guardado por última vez a las ${formatLastSavedTime(lastSavedAt)} h`
       : null,

@@ -12,6 +12,11 @@ export type AdminPostsStats = {
   borradores: number;
 };
 
+export type GaleriaImagen = {
+  url: string;
+  publicId: string;
+};
+
 export type AdminPost = {
   id: string;
   slug: string;
@@ -20,6 +25,7 @@ export type AdminPost = {
   cuerpo: string;
   imagenUrl: string | null;
   imagenPublicId: string | null;
+  galeria: GaleriaImagen[];
   estado: ContentEstado;
   publicadoAt: string | null;
   autorId: string;
@@ -38,6 +44,7 @@ export type CreatePostPayload = {
   cuerpo: string;
   imagenUrl?: string | null;
   imagenPublicId?: string | null;
+  galeria?: GaleriaImagen[];
 };
 
 export type UpdatePostPayload = Partial<CreatePostPayload>;
@@ -60,6 +67,7 @@ export type AdminEvent = {
   fin: string | null;
   imagenUrl: string | null;
   imagenPublicId: string | null;
+  galeria: GaleriaImagen[];
   estado: ContentEstado;
   publicadoAt: string | null;
   autorId: string;
@@ -75,6 +83,7 @@ export type CreateEventPayload = {
   fin?: string | null;
   imagenUrl?: string | null;
   imagenPublicId?: string | null;
+  galeria?: GaleriaImagen[];
 };
 
 export type UpdateEventPayload = Partial<CreateEventPayload>;
