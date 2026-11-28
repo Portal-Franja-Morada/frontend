@@ -8,6 +8,7 @@ import { usePostDetail } from "../hooks/use-post-detail";
 import { Footer } from "./Footer";
 import { GoldCorner } from "./GoldCorner";
 import { Header } from "./Header";
+import { ContentGallery } from "./ContentGallery";
 import { OptimizedImage } from "./OptimizedImage";
 import { PostMarkdown } from "./PostMarkdown";
 
@@ -105,6 +106,8 @@ export function NewsDetailPage() {
                 </p>
 
                 <PostMarkdown content={post.body} />
+
+                <ContentGallery images={post.gallery} alt={post.title} />
 
                 <div className="flex flex-col gap-4">
                   <button

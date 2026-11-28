@@ -3,7 +3,7 @@ import {
   cloudinaryImageUrl,
 } from "../lib/cloudinary-image";
 
-type ImageLayout = "card" | "detail";
+type ImageLayout = "card" | "detail" | "gallery";
 
 const LAYOUT: Record<
   ImageLayout,
@@ -32,6 +32,14 @@ const LAYOUT: Record<
     displayHeight: 400,
     className: "aspect-[960/400] h-auto w-full object-cover",
   },
+  gallery: {
+    width: 600,
+    srcSet: [400, 800],
+    sizes: "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 240px",
+    displayWidth: 240,
+    displayHeight: 240,
+    className: "aspect-square h-full w-full object-cover",
+  },
 };
 
 type OptimizedImageProps = {
@@ -40,6 +48,7 @@ type OptimizedImageProps = {
   layout: ImageLayout;
   loading?: "lazy" | "eager";
   className?: string;
+  onClick?: () => void;
 };
 
 export function OptimizedImage({
@@ -48,11 +57,13 @@ export function OptimizedImage({
   layout,
   loading = "lazy",
   className,
+  onClick,
 }: OptimizedImageProps) {
   const preset = LAYOUT[layout];
 
   return (
     <img
+      onClick={onClick}
       src={cloudinaryImageUrl(src, { width: preset.width })}
       srcSet={cloudinaryImageSrcSet(src, preset.srcSet)}
       sizes={preset.sizes}

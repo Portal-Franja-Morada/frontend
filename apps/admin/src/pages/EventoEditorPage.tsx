@@ -4,6 +4,7 @@ import { LoadingState } from "@franja/ui/components/loading-state";
 import { cn } from "@franja/ui/lib/utils";
 import { Link } from "react-router-dom";
 import { AdminLayout } from "../components/AdminLayout";
+import { EditorGallerySection } from "../components/EditorGallerySection";
 import { EventEditorPreview } from "../components/EventEditorPreview";
 import { MarkdownToolbar } from "../components/MarkdownToolbar";
 import {
@@ -47,6 +48,13 @@ export function EventoEditorPage() {
     handleImageChange,
     handleClearImage,
     handleCancelNavigate,
+    galleryError,
+    galleryItems,
+    galleryPreviewUrls,
+    addGalleryFiles,
+    removeGalleryAt,
+    moveGalleryUp,
+    moveGalleryDown,
     retry,
   } = useEventEditor();
 
@@ -252,6 +260,17 @@ export function EventoEditorPage() {
                       </p>
                     ) : null}
                   </div>
+
+                  <EditorGallerySection
+                    items={galleryItems}
+                    previewUrls={galleryPreviewUrls}
+                    disabled={busy}
+                    galleryError={galleryError}
+                    onAddFiles={addGalleryFiles}
+                    onRemove={removeGalleryAt}
+                    onMoveUp={moveGalleryUp}
+                    onMoveDown={moveGalleryDown}
+                  />
 
                   <div>
                     <label

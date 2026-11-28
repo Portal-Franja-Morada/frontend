@@ -1,10 +1,15 @@
 /** Copiado de @franja/shared (backend) — solo tipos públicos de contenido. */
 
+export type PublicGaleriaImagen = {
+  url: string;
+};
+
 export type PublicPost = {
   slug: string;
   titulo: string;
   resumen: string;
   imagenUrl: string | null;
+  galeria: PublicGaleriaImagen[];
   publicadoAt: string;
 };
 
@@ -16,6 +21,7 @@ export type PublicEvent = {
   inicio: string;
   fin: string | null;
   imagenUrl: string | null;
+  galeria: PublicGaleriaImagen[];
   publicadoAt: string;
 };
 

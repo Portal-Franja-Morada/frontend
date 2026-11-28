@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 const UNSAVED_IMAGE_MESSAGE =
-  "Tenés una imagen elegida sin guardar. Si salís ahora se perderá.";
+  "Tenés imágenes elegidas sin guardar. Si salís ahora se perderán.";
 
 export function useUnsavedImageGuard(active: boolean) {
   useEffect(() => {

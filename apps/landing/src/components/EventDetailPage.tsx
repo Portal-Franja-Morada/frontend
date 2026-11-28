@@ -8,6 +8,7 @@ import { EventAgendaPanel } from "./EventAgendaPanel";
 import { Footer } from "./Footer";
 import { GoldCorner } from "./GoldCorner";
 import { Header } from "./Header";
+import { ContentGallery } from "./ContentGallery";
 import { OptimizedImage } from "./OptimizedImage";
 import { PostMarkdown } from "./PostMarkdown";
 
@@ -80,6 +81,8 @@ export function EventDetailPage() {
                     />
 
                     <PostMarkdown content={event.description} />
+
+                    <ContentGallery images={event.gallery} alt={event.title} />
                   </article>
 
                   <EventAgendaPanel

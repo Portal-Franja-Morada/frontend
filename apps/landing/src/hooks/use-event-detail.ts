@@ -19,6 +19,7 @@ export type EventDetailView = {
   description: string;
   image: string;
   imageAlt: string;
+  gallery: string[];
   dateLabel: string;
   timeLabel: string;
   location: string;
@@ -37,6 +38,7 @@ function mapEventDetail(event: PublicEventDetail): EventDetailView {
     description: event.descripcion,
     image: event.imagenUrl ?? DEFAULT_NEWS_IMAGE,
     imageAlt: event.titulo,
+    gallery: event.galeria.map((item) => item.url),
     dateLabel: formatEventDateLong(event.inicio),
     timeLabel: formatEventTimeRange(event.inicio, event.fin),
     location: event.lugar,

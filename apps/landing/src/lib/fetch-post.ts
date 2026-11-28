@@ -21,7 +21,14 @@ function isPublicPostDetail(data: unknown): data is PublicPostDetail {
     typeof record.resumen === "string" &&
     typeof record.publicadoAt === "string" &&
     typeof record.cuerpo === "string" &&
-    (record.imagenUrl === null || typeof record.imagenUrl === "string")
+    (record.imagenUrl === null || typeof record.imagenUrl === "string") &&
+    Array.isArray(record.galeria) &&
+    record.galeria.every(
+      (item) =>
+        item &&
+        typeof item === "object" &&
+        typeof (item as Record<string, unknown>).url === "string",
+    )
   );
 }
 
