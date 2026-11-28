@@ -1,5 +1,6 @@
 import type { PublicEvent } from "../types/content";
 import type { AgendaEvent, EventListItem } from "../types/view";
+import { DEFAULT_NEWS_IMAGE } from "./constants";
 import {
   formatEventDay,
   formatEventMonth,
@@ -18,6 +19,8 @@ export function mapPublicEventToListItem(event: PublicEvent): EventListItem {
     location: event.lugar,
     href: `/eventos/${event.slug}`,
     inicio: event.inicio,
+    image: event.imagenUrl ?? DEFAULT_NEWS_IMAGE,
+    imageAlt: event.titulo,
   };
 }
 
@@ -30,5 +33,7 @@ export function mapPublicEventToAgendaEvent(event: PublicEvent): AgendaEvent {
     time: formatEventTime(event.inicio),
     location: event.lugar,
     href: `/eventos/${event.slug}`,
+    image: event.imagenUrl ?? DEFAULT_NEWS_IMAGE,
+    imageAlt: event.titulo,
   };
 }

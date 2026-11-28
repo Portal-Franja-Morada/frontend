@@ -8,6 +8,7 @@ import { EventAgendaPanel } from "./EventAgendaPanel";
 import { Footer } from "./Footer";
 import { GoldCorner } from "./GoldCorner";
 import { Header } from "./Header";
+import { OptimizedImage } from "./OptimizedImage";
 import { PostMarkdown } from "./PostMarkdown";
 
 export function EventDetailPage() {
@@ -70,12 +71,12 @@ export function EventDetailPage() {
 
                 <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
                   <article className="flex w-full flex-col gap-6 lg:max-w-[880px]">
-                    <img
+                    <OptimizedImage
                       src={event.image}
                       alt={event.imageAlt}
-                      className="h-[220px] w-full rounded-xl object-cover lg:h-[340px]"
-                      width={880}
-                      height={340}
+                      layout="detail"
+                      loading="eager"
+                      className="aspect-[880/340] h-[220px] w-full rounded-xl object-cover lg:h-[340px]"
                     />
 
                     <PostMarkdown content={event.description} />

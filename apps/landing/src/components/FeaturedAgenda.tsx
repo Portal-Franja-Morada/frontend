@@ -4,6 +4,7 @@ import { LoadingState } from "@franja/ui/components/loading-state";
 import type { DataState } from "../lib/data-state";
 import type { AgendaEvent } from "../types/view";
 import { GoldCorner } from "./GoldCorner";
+import { OptimizedImage } from "./OptimizedImage";
 import { Section } from "./Section";
 
 type FeaturedAgendaProps = {
@@ -25,19 +26,27 @@ function EventDate({ day, month }: Pick<AgendaEvent, "day" | "month">) {
 
 function EventCard({ event }: { event: AgendaEvent }) {
   return (
-    <article className="flex items-start gap-4 rounded-xl border border-franja-border bg-white p-5">
-      <EventDate day={event.day} month={event.month} />
-      <div className="flex flex-col gap-2">
-        <h3 className="text-sm font-bold text-franja-dark">{event.title}</h3>
-        <p className="text-[13px] text-franja-muted">
-          {event.time} · {event.location}
-        </p>
-        <a
-          href={event.href}
-          className="text-[13px] text-franja-morada transition-opacity hover:opacity-80"
-        >
-          Ver evento →
-        </a>
+    <article className="flex flex-col overflow-hidden rounded-xl border border-franja-border bg-white">
+      <OptimizedImage
+        src={event.image}
+        alt={event.imageAlt}
+        layout="card"
+        className="aspect-[409/200] h-[160px] w-full object-cover"
+      />
+      <div className="flex items-start gap-4 p-5">
+        <EventDate day={event.day} month={event.month} />
+        <div className="flex flex-col gap-2">
+          <h3 className="text-sm font-bold text-franja-dark">{event.title}</h3>
+          <p className="text-[13px] text-franja-muted">
+            {event.time} · {event.location}
+          </p>
+          <a
+            href={event.href}
+            className="text-[13px] text-franja-morada transition-opacity hover:opacity-80"
+          >
+            Ver evento →
+          </a>
+        </div>
       </div>
     </article>
   );
