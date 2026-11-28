@@ -16,8 +16,9 @@ import {
   publishEvent,
   updateEvent,
 } from "../lib/events-api";
-import { uploadImage, validateImageFile } from "../lib/upload-api";
 import type { AdminEvent, ContentEstado } from "../types/content";
+import { useEditorImage } from "./use-editor-image";
+import { useUnsavedImageGuard } from "./use-unsaved-image-guard";
 
 type EventEditorMode = "create" | "edit";
 
@@ -102,8 +103,8 @@ function validateForDraft(form: FormState): boolean {
   );
 }
 
-function validateForPublish(form: FormState): boolean {
-  if (!validateForDraft(form) || !form.imagenUrl) {
+function validateForPublish(form: FormState, hasImage: boolean): boolean {
+  if (!validateForDraft(form) || !hasImage) {
     return false;
   }
   if (isFinBeforeInicio(form.fecha, form.horaInicio, form.horaFin)) {
@@ -135,8 +136,6 @@ export function useEventEditor() {
   );
   const [notFound, setNotFound] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const [uiState, setUiState] = useState<EditorUiState>(previewUi);
   const [showValidation, setShowValidation] = useState(
     previewUi === "validacion",
@@ -144,6 +143,27 @@ export function useEventEditor() {
   const [selection, setSelection] = useState({ start: 0, end: 0 });
 
   const bodyRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const {
+    imageError,
+    saveError,
+    previewUrl,
+    hasUnsavedImage,
+    hasImage: hasSelectedImage,
+    handleImageSelect,
+    handleRemoveImage,
+    ensureImageUploaded,
+    markSaveFailed,
+    clearSaveError,
+  } = useEditorImage("evento");
+
+  const { confirmLeave } = useUnsavedImageGuard(
+    hasUnsavedImage && !previewDataState,
+  );
+
+  const applyImageFields = useCallback((patch: Partial<FormState>) => {
+    setForm((current) => ({ ...current, ...patch }));
+  }, []);
 
   const loadEvent = useCallback(async () => {
     if (mode !== "edit" || !id) {
@@ -183,6 +203,8 @@ export function useEventEditor() {
     setForm((current) => ({ ...current, ...patch }));
   }, []);
 
+  const imageReady = hasSelectedImage(form);
+
   const persistDraft = useCallback(async (): Promise<AdminEvent | null> => {
     if (!validateForDraft(form)) {
       setShowValidation(true);
@@ -192,9 +214,15 @@ export function useEventEditor() {
       setShowValidation(true);
       return null;
     }
-    const payload = buildPayload(form);
     setBusy(true);
+    clearSaveError();
     try {
+      const formForSave = await ensureImageUploaded(form, applyImageFields);
+      if (!formForSave) {
+        return null;
+      }
+
+      const payload = buildPayload({ ...form, ...formForSave });
       if (eventId) {
         const event = await updateEvent(eventId, payload);
         setLastSavedAt(new Date(event.updatedAt));
@@ -210,32 +238,51 @@ export function useEventEditor() {
         state: { event },
       });
       return event;
+    } catch {
+      markSaveFailed();
+      return null;
     } finally {
       setBusy(false);
     }
-  }, [eventId, form, navigate]);
+  }, [
+    applyImageFields,
+    clearSaveError,
+    ensureImageUploaded,
+    eventId,
+    form,
+    markSaveFailed,
+    navigate,
+  ]);
 
   const handleSaveDraft = useCallback(() => {
     void persistDraft();
   }, [persistDraft]);
 
   const handlePublishClick = useCallback(() => {
-    if (!validateForPublish(form)) {
+    if (!validateForPublish(form, imageReady)) {
       setShowValidation(true);
       return;
     }
     setUiState("confirmar");
-  }, [form]);
+  }, [form, imageReady]);
 
   const handlePublishConfirm = useCallback(async () => {
-    if (!validateForPublish(form)) {
+    if (!validateForPublish(form, imageReady)) {
       setUiState(null);
       setShowValidation(true);
       return;
     }
     setBusy(true);
+    clearSaveError();
     try {
-      const payload = buildPayload(form);
+      const formForSave = await ensureImageUploaded(form, applyImageFields);
+      if (!formForSave || !formForSave.imagenUrl) {
+        setUiState(null);
+        setShowValidation(true);
+        return;
+      }
+
+      const payload = buildPayload({ ...form, ...formForSave });
       let currentId = eventId;
       if (!currentId) {
         const created = await createEvent(payload);
@@ -254,44 +301,44 @@ export function useEventEditor() {
       setLastSavedAt(new Date(published.updatedAt));
       setUiState("listo");
     } catch {
+      markSaveFailed();
       setUiState(null);
-      setFetchState("error");
     } finally {
       setBusy(false);
     }
-  }, [eventId, form, navigate]);
+  }, [
+    applyImageFields,
+    clearSaveError,
+    ensureImageUploaded,
+    eventId,
+    form,
+    imageReady,
+    markSaveFailed,
+    navigate,
+  ]);
 
   const handleImageChange = useCallback(
     (file: File | null) => {
-      if (!file) {
-        return;
-      }
-      const validation = validateImageFile(file);
-      if (validation) {
-        setUploadError(validation);
-        return;
-      }
-      setUploadError(null);
-      setUploadingImage(true);
-      void (async () => {
-        try {
-          const result = await uploadImage(file, "evento");
-          applyForm({
-            imagenUrl: result.url,
-            imagenPublicId: result.publicId,
-          });
-        } catch (error) {
-          setUploadError(
-            error instanceof Error
-              ? error.message
-              : "No pudimos cargar la imagen.",
-          );
-        } finally {
-          setUploadingImage(false);
-        }
-      })();
+      handleImageSelect(file);
     },
-    [applyForm],
+    [handleImageSelect],
+  );
+
+  const handleClearImage = useCallback(() => {
+    handleRemoveImage(applyImageFields);
+  }, [applyImageFields, handleRemoveImage]);
+
+  const handleCancelNavigate = useCallback(
+    (event: { preventDefault: () => void }) => {
+      if (!hasUnsavedImage) {
+        return;
+      }
+      event.preventDefault();
+      if (confirmLeave()) {
+        navigate("/eventos");
+      }
+    },
+    [confirmLeave, hasUnsavedImage, navigate],
   );
 
   const retry = useCallback(() => {
@@ -312,8 +359,10 @@ export function useEventEditor() {
     applyForm,
     dataState,
     busy,
-    uploadingImage,
-    uploadError,
+    imageError,
+    saveError,
+    imagePreviewUrl: previewUrl(form.imagenUrl),
+    hasImage: imageReady,
     lastSavedLabel: lastSavedAt
       ? `Guardado por última vez a las ${formatLastSavedTime(lastSavedAt)} h`
       : null,
@@ -329,6 +378,8 @@ export function useEventEditor() {
     handlePublishClick,
     handlePublishConfirm,
     handleImageChange,
+    handleClearImage,
+    handleCancelNavigate,
     retry,
   };
 }
