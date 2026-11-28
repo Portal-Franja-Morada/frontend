@@ -2,18 +2,28 @@ import { EmptyState } from "@franja/ui/components/empty-state";
 import { ErrorState } from "@franja/ui/components/error-state";
 import { LoadingState } from "@franja/ui/components/loading-state";
 import { cn } from "@franja/ui/lib/utils";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdminLayout } from "../components/AdminLayout";
 import { AdminPostsPagination } from "../components/AdminPostsPagination";
+import { ContentActionToast } from "../components/ContentActionToast";
+import { DeleteContentDialog } from "../components/DeleteContentDialog";
 import { PostStatusBadge } from "../components/PostStatusBadge";
 import { PostsStats } from "../components/PostsStats";
 import { useAdminEventsPage } from "../hooks/use-admin-events-page";
+import { useDeleteContent } from "../hooks/use-delete-content";
 import { formatAdminListDate } from "../lib/dates";
 
 const inputClassName =
   "h-14 w-full rounded-lg border border-franja-border bg-white px-4 text-base text-franja-dark outline-none transition-colors placeholder:text-franja-muted focus:border-franja-morada";
 
+type EventosLocationState = {
+  deletedToast?: string;
+};
+
 export function EventosPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     events,
     stats,
@@ -29,7 +39,43 @@ export function EventosPage() {
     setEstadoFilter,
     goToPage,
     retry,
+    refresh,
+    removeEvent,
   } = useAdminEventsPage();
+
+  const {
+    deleteOpen,
+    deleteTitulo,
+    deleting,
+    dialogError,
+    toast,
+    openDelete,
+    closeDelete,
+    confirmDelete,
+    dismissToast,
+    showToast,
+  } = useDeleteContent({
+    kind: "event",
+    onDeleted: (id) => {
+      removeEvent(id);
+      void refresh();
+    },
+    onRefresh: () => {
+      void refresh();
+    },
+  });
+
+  useEffect(() => {
+    const state = location.state as EventosLocationState | null;
+    if (!state?.deletedToast) {
+      return;
+    }
+    showToast(state.deletedToast);
+    navigate(location.pathname + location.search, {
+      replace: true,
+      state: null,
+    });
+  }, [location.pathname, location.search, location.state, navigate, showToast]);
 
   return (
     <AdminLayout>
@@ -124,13 +170,23 @@ export function EventosPage() {
                         <PostStatusBadge estado={event.estado} />
                       </td>
                       <td className="px-5 py-4">
-                        <Link
-                          to={`/eventos/${event.id}/editar`}
-                          state={{ event }}
-                          className="text-sm font-bold text-franja-morada"
-                        >
-                          Editar
-                        </Link>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <Link
+                            to={`/eventos/${event.id}/editar`}
+                            state={{ event }}
+                            className="text-sm font-bold text-franja-morada"
+                          >
+                            Editar
+                          </Link>
+                          <button
+                            type="button"
+                            disabled={deleting}
+                            onClick={() => openDelete(event.id, event.titulo)}
+                            className="text-sm font-bold text-franja-error disabled:opacity-50"
+                          >
+                            Eliminar
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -153,13 +209,23 @@ export function EventosPage() {
                     </p>
                     <PostStatusBadge estado={event.estado} />
                   </div>
-                  <Link
-                    to={`/eventos/${event.id}/editar`}
-                    state={{ event }}
-                    className="text-sm font-bold text-franja-morada"
-                  >
-                    Editar
-                  </Link>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Link
+                      to={`/eventos/${event.id}/editar`}
+                      state={{ event }}
+                      className="text-sm font-bold text-franja-morada"
+                    >
+                      Editar
+                    </Link>
+                    <button
+                      type="button"
+                      disabled={deleting}
+                      onClick={() => openDelete(event.id, event.titulo)}
+                      className="text-sm font-bold text-franja-error disabled:opacity-50"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>
@@ -176,6 +242,20 @@ export function EventosPage() {
           </div>
         ) : null}
       </main>
+
+      {deleteOpen ? (
+        <DeleteContentDialog
+          titulo={deleteTitulo}
+          busy={deleting}
+          error={dialogError}
+          onCancel={closeDelete}
+          onConfirm={() => void confirmDelete()}
+        />
+      ) : null}
+
+      {toast ? (
+        <ContentActionToast message={toast} onDismiss={dismissToast} />
+      ) : null}
     </AdminLayout>
   );
 }

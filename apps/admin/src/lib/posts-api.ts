@@ -148,6 +148,16 @@ export async function fetchAdminPostById(
   }
 }
 
+export async function deletePost(id: string): Promise<void> {
+  const response = await apiFetch(`/admin/posts/${id}`, {
+    method: "DELETE",
+  });
+  if (response.status === 204) {
+    return;
+  }
+  throw await readApiError(response);
+}
+
 export async function publishPost(id: string): Promise<AdminPost> {
   const response = await apiFetch(`/admin/posts/${id}/publicar`, {
     method: "POST",

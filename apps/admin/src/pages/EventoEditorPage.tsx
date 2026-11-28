@@ -2,8 +2,10 @@ import { EmptyState } from "@franja/ui/components/empty-state";
 import { ErrorState } from "@franja/ui/components/error-state";
 import { LoadingState } from "@franja/ui/components/loading-state";
 import { cn } from "@franja/ui/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { AdminLayout } from "../components/AdminLayout";
+import { ContentActionToast } from "../components/ContentActionToast";
+import { DeleteContentDialog } from "../components/DeleteContentDialog";
 import { EditorGallerySection } from "../components/EditorGallerySection";
 import { EventEditorPreview } from "../components/EventEditorPreview";
 import { MarkdownToolbar } from "../components/MarkdownToolbar";
@@ -13,6 +15,7 @@ import {
   ValidationOverlay,
 } from "../components/PostEditorOverlays";
 import { PostStatusBadge } from "../components/PostStatusBadge";
+import { useDeleteContent } from "../hooks/use-delete-content";
 import { useEventEditor } from "../hooks/use-event-editor";
 
 const fieldClassName =
@@ -22,6 +25,8 @@ const EVENT_VALIDATION_MESSAGE =
   "Elegí una fecha y completá el horario del evento.";
 
 export function EventoEditorPage() {
+  const navigate = useNavigate();
+  const { id: routeEventId } = useParams<{ id: string }>();
   const {
     mode,
     estado,
@@ -58,6 +63,30 @@ export function EventoEditorPage() {
     retry,
   } = useEventEditor();
 
+  const {
+    deleteOpen,
+    deleteTitulo,
+    deleting,
+    dialogError,
+    toast,
+    openDelete,
+    closeDelete,
+    confirmDelete,
+    dismissToast,
+  } = useDeleteContent({
+    kind: "event",
+    onDeleted: () => {
+      const label = form.titulo.trim() || "Sin título";
+      navigate("/eventos", {
+        state: { deletedToast: `Eliminamos «${label}».` },
+      });
+    },
+    onRefresh: () => {
+      navigate("/eventos");
+    },
+  });
+
+  const formBusy = busy || deleting;
   const isCreate = mode === "create";
   const heading = isCreate ? "CREAR EVENTO" : "EDITAR EVENTO";
   const breadcrumbTail = isCreate ? "Nueva publicación" : "Editar evento";
@@ -125,7 +154,7 @@ export function EventoEditorPage() {
                         applyForm({ titulo: event.target.value })
                       }
                       className={cn(fieldClassName, "mt-2")}
-                      disabled={busy}
+                      disabled={formBusy}
                     />
                   </div>
 
@@ -145,7 +174,7 @@ export function EventoEditorPage() {
                           applyForm({ fecha: event.target.value })
                         }
                         className={cn(fieldClassName, "mt-2")}
-                        disabled={busy}
+                        disabled={formBusy}
                       />
                     </div>
                     <div>
@@ -160,7 +189,7 @@ export function EventoEditorPage() {
                             applyForm({ horaInicio: event.target.value })
                           }
                           className={fieldClassName}
-                          disabled={busy}
+                          disabled={formBusy}
                           aria-label="Hora de inicio"
                         />
                         <span className="text-sm text-franja-muted">a</span>
@@ -171,7 +200,7 @@ export function EventoEditorPage() {
                             applyForm({ horaFin: event.target.value })
                           }
                           className={fieldClassName}
-                          disabled={busy}
+                          disabled={formBusy}
                           aria-label="Hora de fin"
                         />
                       </div>
@@ -193,7 +222,7 @@ export function EventoEditorPage() {
                         applyForm({ lugar: event.target.value })
                       }
                       className={cn(fieldClassName, "mt-2")}
-                      disabled={busy}
+                      disabled={formBusy}
                     />
                   </div>
 
@@ -219,7 +248,7 @@ export function EventoEditorPage() {
                           type="file"
                           accept="image/jpeg,image/png,image/webp"
                           className="sr-only"
-                          disabled={busy}
+                          disabled={formBusy}
                           onChange={(event) =>
                             handleImageChange(event.target.files?.[0] ?? null)
                           }
@@ -228,7 +257,7 @@ export function EventoEditorPage() {
                       {hasImage ? (
                         <button
                           type="button"
-                          disabled={busy}
+                          disabled={formBusy}
                           onClick={handleClearImage}
                           className="inline-flex h-12 items-center justify-center rounded-lg border border-franja-border bg-white px-5 text-sm font-bold text-franja-morada hover:bg-franja-surface disabled:opacity-50"
                         >
@@ -264,7 +293,7 @@ export function EventoEditorPage() {
                   <EditorGallerySection
                     items={galleryItems}
                     previewUrls={galleryPreviewUrls}
-                    disabled={busy}
+                    disabled={formBusy}
                     galleryError={galleryError}
                     onAddFiles={addGalleryFiles}
                     onRemove={removeGalleryAt}
@@ -281,7 +310,7 @@ export function EventoEditorPage() {
                     </label>
                     <div className="mt-2 overflow-hidden rounded-lg border border-franja-border">
                       <MarkdownToolbar
-                        disabled={busy}
+                        disabled={formBusy}
                         value={form.descripcion}
                         selectionStart={selection.start}
                         selectionEnd={selection.end}
@@ -313,7 +342,7 @@ export function EventoEditorPage() {
                           });
                         }}
                         className="w-full resize-y border-0 bg-white px-4 py-3 text-base text-franja-dark outline-none"
-                        disabled={busy}
+                        disabled={formBusy}
                       />
                     </div>
                   </div>
@@ -328,20 +357,30 @@ export function EventoEditorPage() {
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <button
                     type="button"
-                    disabled={busy}
+                    disabled={formBusy}
                     onClick={handlePublishClick}
                     className="inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-5 text-sm font-bold text-white transition-colors hover:bg-franja-morada/90 disabled:opacity-50"
                   >
-                    {busy ? "Guardando…" : "Publicar evento"}
+                    {formBusy ? "Guardando…" : "Publicar evento"}
                   </button>
                   <button
                     type="button"
-                    disabled={busy}
+                    disabled={formBusy}
                     onClick={handleSaveDraft}
                     className="inline-flex h-12 items-center justify-center rounded-lg border border-franja-border bg-white px-5 text-sm font-bold text-franja-morada transition-colors hover:bg-franja-surface disabled:opacity-50"
                   >
-                    {busy ? "Guardando…" : "Guardar borrador"}
+                    {formBusy ? "Guardando…" : "Guardar borrador"}
                   </button>
+                  {!isCreate && routeEventId ? (
+                    <button
+                      type="button"
+                      disabled={formBusy}
+                      onClick={() => openDelete(routeEventId, form.titulo)}
+                      className="inline-flex h-12 items-center justify-center rounded-lg border border-franja-error/40 bg-white px-5 text-sm font-bold text-franja-error transition-colors hover:bg-franja-error/5 disabled:opacity-50"
+                    >
+                      Eliminar
+                    </button>
+                  ) : null}
                 </div>
 
                 <Link
@@ -369,12 +408,26 @@ export function EventoEditorPage() {
 
       {confirmOpen ? (
         <PublishConfirmOverlay
-          busy={busy}
+          busy={formBusy}
           title="¿PUBLICAMOS ESTA ACTIVIDAD?"
           message="Va a quedar visible para toda la comunidad. Revisá el título, la imagen y la fecha antes de continuar."
           onCancel={() => setUiState(null)}
           onConfirm={() => void handlePublishConfirm()}
         />
+      ) : null}
+
+      {deleteOpen ? (
+        <DeleteContentDialog
+          titulo={deleteTitulo}
+          busy={deleting}
+          error={dialogError}
+          onCancel={closeDelete}
+          onConfirm={() => void confirmDelete()}
+        />
+      ) : null}
+
+      {toast ? (
+        <ContentActionToast message={toast} onDismiss={dismissToast} />
       ) : null}
     </AdminLayout>
   );
