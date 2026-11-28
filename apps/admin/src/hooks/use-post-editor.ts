@@ -11,8 +11,9 @@ import {
   publishPost,
   updatePost,
 } from "../lib/posts-api";
-import { uploadImage, validateImageFile } from "../lib/upload-api";
 import type { AdminPost, ContentEstado } from "../types/content";
+import { useEditorImage } from "./use-editor-image";
+import { useUnsavedImageGuard } from "./use-unsaved-image-guard";
 
 type PostEditorMode = "create" | "edit";
 
@@ -64,10 +65,6 @@ function validateForDraft(form: FormState): boolean {
   return Boolean(form.titulo.trim() && form.cuerpo.trim());
 }
 
-function validateForPublish(form: FormState): boolean {
-  return validateForDraft(form) && Boolean(form.imagenUrl);
-}
-
 export function usePostEditor() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -98,8 +95,6 @@ export function usePostEditor() {
   );
   const [notFound, setNotFound] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const [uiState, setUiState] = useState<EditorUiState>(previewUi);
   const [showValidation, setShowValidation] = useState(
     previewUi === "validacion",
@@ -107,6 +102,27 @@ export function usePostEditor() {
   const [selection, setSelection] = useState({ start: 0, end: 0 });
 
   const bodyRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const {
+    imageError,
+    saveError,
+    previewUrl,
+    hasUnsavedImage,
+    hasImage,
+    handleImageSelect,
+    handleRemoveImage,
+    ensureImageUploaded,
+    markSaveFailed,
+    clearSaveError,
+  } = useEditorImage("novedad");
+
+  const { confirmLeave } = useUnsavedImageGuard(
+    hasUnsavedImage && !previewDataState,
+  );
+
+  const applyImageFields = useCallback((patch: Partial<FormState>) => {
+    setForm((current) => ({ ...current, ...patch }));
+  }, []);
 
   const loadPost = useCallback(async () => {
     if (mode !== "edit" || !id) {
@@ -156,9 +172,15 @@ export function usePostEditor() {
       setShowValidation(true);
       return null;
     }
-    const payload = buildPayload(form);
     setBusy(true);
+    clearSaveError();
     try {
+      const formForSave = await ensureImageUploaded(form, applyImageFields);
+      if (!formForSave) {
+        return null;
+      }
+
+      const payload = buildPayload({ ...form, ...formForSave });
       if (postId) {
         const post = await updatePost(postId, payload);
         setLastSavedAt(new Date(post.updatedAt));
@@ -174,32 +196,51 @@ export function usePostEditor() {
         state: { post },
       });
       return post;
+    } catch {
+      markSaveFailed();
+      return null;
     } finally {
       setBusy(false);
     }
-  }, [form, navigate, postId]);
+  }, [
+    applyImageFields,
+    clearSaveError,
+    ensureImageUploaded,
+    form,
+    markSaveFailed,
+    navigate,
+    postId,
+  ]);
 
   const handleSaveDraft = useCallback(() => {
     void persistDraft();
   }, [persistDraft]);
 
   const handlePublishClick = useCallback(() => {
-    if (!validateForPublish(form)) {
+    if (!validateForDraft(form) || !hasImage(form)) {
       setShowValidation(true);
       return;
     }
     setUiState("confirmar");
-  }, [form]);
+  }, [form, hasImage]);
 
   const handlePublishConfirm = useCallback(async () => {
-    if (!validateForPublish(form)) {
+    if (!validateForDraft(form) || !hasImage(form)) {
       setUiState(null);
       setShowValidation(true);
       return;
     }
     setBusy(true);
+    clearSaveError();
     try {
-      const payload = buildPayload(form);
+      const formForSave = await ensureImageUploaded(form, applyImageFields);
+      if (!formForSave || !formForSave.imagenUrl) {
+        setUiState(null);
+        setShowValidation(true);
+        return;
+      }
+
+      const payload = buildPayload({ ...form, ...formForSave });
       let currentId = postId;
       if (!currentId) {
         const created = await createPost(payload);
@@ -218,44 +259,44 @@ export function usePostEditor() {
       setLastSavedAt(new Date(published.updatedAt));
       setUiState("listo");
     } catch {
+      markSaveFailed();
       setUiState(null);
-      setFetchState("error");
     } finally {
       setBusy(false);
     }
-  }, [form, navigate, postId]);
+  }, [
+    applyImageFields,
+    clearSaveError,
+    ensureImageUploaded,
+    form,
+    hasImage,
+    markSaveFailed,
+    navigate,
+    postId,
+  ]);
 
   const handleImageChange = useCallback(
     (file: File | null) => {
-      if (!file) {
-        return;
-      }
-      const validation = validateImageFile(file);
-      if (validation) {
-        setUploadError(validation);
-        return;
-      }
-      setUploadError(null);
-      setUploadingImage(true);
-      void (async () => {
-        try {
-          const result = await uploadImage(file, "novedad");
-          applyForm({
-            imagenUrl: result.url,
-            imagenPublicId: result.publicId,
-          });
-        } catch (error) {
-          setUploadError(
-            error instanceof Error
-              ? error.message
-              : "No pudimos cargar la imagen.",
-          );
-        } finally {
-          setUploadingImage(false);
-        }
-      })();
+      handleImageSelect(file);
     },
-    [applyForm],
+    [handleImageSelect],
+  );
+
+  const handleClearImage = useCallback(() => {
+    handleRemoveImage(applyImageFields);
+  }, [applyImageFields, handleRemoveImage]);
+
+  const handleCancelNavigate = useCallback(
+    (event: { preventDefault: () => void }) => {
+      if (!hasUnsavedImage) {
+        return;
+      }
+      event.preventDefault();
+      if (confirmLeave()) {
+        navigate("/novedades");
+      }
+    },
+    [confirmLeave, hasUnsavedImage, navigate],
   );
 
   const retry = useCallback(() => {
@@ -276,8 +317,10 @@ export function usePostEditor() {
     applyForm,
     dataState,
     busy,
-    uploadingImage,
-    uploadError,
+    imageError,
+    saveError,
+    imagePreviewUrl: previewUrl(form.imagenUrl),
+    hasImage: hasImage(form),
     lastSavedLabel: lastSavedAt
       ? `Guardado por última vez a las ${formatLastSavedTime(lastSavedAt)} h`
       : null,
@@ -293,6 +336,8 @@ export function usePostEditor() {
     handlePublishClick,
     handlePublishConfirm,
     handleImageChange,
+    handleClearImage,
+    handleCancelNavigate,
     retry,
     navigate,
   };

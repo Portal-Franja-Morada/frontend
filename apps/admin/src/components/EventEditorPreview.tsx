@@ -1,3 +1,4 @@
+import { DEFAULT_NEWS_IMAGE } from "../lib/constants";
 import {
   formatEventDay,
   formatEventMonth,
@@ -12,6 +13,7 @@ type EventEditorPreviewProps = {
   horaInicio: string;
   horaFin: string;
   descripcion: string;
+  imagenUrl: string | null;
 };
 
 export function EventEditorPreview({
@@ -21,6 +23,7 @@ export function EventEditorPreview({
   horaInicio,
   horaFin,
   descripcion,
+  imagenUrl,
 }: EventEditorPreviewProps) {
   const title = titulo.trim() || "Título del evento";
   const place = lugar.trim() || "Lugar del evento";
@@ -37,35 +40,46 @@ export function EventEditorPreview({
       <p className="text-xs font-bold uppercase tracking-wide text-franja-muted">
         Vista previa
       </p>
-      <article className="flex min-h-[280px] flex-col gap-[18px] rounded-xl border border-franja-border bg-white p-6">
-        <div className="flex flex-col items-center self-start rounded-lg bg-franja-rose px-3 py-3">
-          <span className="text-section leading-section font-bold text-franja-morada">
-            {day}
-          </span>
-          <span className="text-xs font-bold text-franja-morada">
-            {monthYear}
+      <article className="flex flex-col overflow-hidden rounded-xl border border-franja-border bg-white">
+        <img
+          src={imagenUrl ?? DEFAULT_NEWS_IMAGE}
+          alt=""
+          className="h-[160px] w-full object-cover"
+          width={409}
+          height={160}
+        />
+        <div className="flex min-h-[200px] flex-col gap-[18px] p-6">
+          <div className="flex flex-col items-center self-start rounded-lg bg-franja-rose px-3 py-3">
+            <span className="text-section leading-section font-bold text-franja-morada">
+              {day}
+            </span>
+            <span className="text-xs font-bold text-franja-morada">
+              {monthYear}
+            </span>
+          </div>
+          <p className="text-xs font-bold text-franja-morada">{meta}</p>
+          <h3 className="text-card-title font-bold text-franja-dark">
+            {title}
+          </h3>
+          <div className="text-base text-franja-muted">
+            <p>
+              {horaFin
+                ? `${horaInicio} a ${horaFin} h`
+                : horaInicio
+                  ? `${horaInicio} h`
+                  : "Horario"}
+            </p>
+            <p>{place}</p>
+          </div>
+          {descripcion.trim() ? (
+            <p className="text-[13px] text-franja-muted line-clamp-3">
+              {descripcion.trim()}
+            </p>
+          ) : null}
+          <span className="mt-auto text-sm font-bold text-franja-morada">
+            Conocé el evento →
           </span>
         </div>
-        <p className="text-xs font-bold text-franja-morada">{meta}</p>
-        <h3 className="text-card-title font-bold text-franja-dark">{title}</h3>
-        <div className="text-base text-franja-muted">
-          <p>
-            {horaFin
-              ? `${horaInicio} a ${horaFin} h`
-              : horaInicio
-                ? `${horaInicio} h`
-                : "Horario"}
-          </p>
-          <p>{place}</p>
-        </div>
-        {descripcion.trim() ? (
-          <p className="text-[13px] text-franja-muted line-clamp-3">
-            {descripcion.trim()}
-          </p>
-        ) : null}
-        <span className="mt-auto text-sm font-bold text-franja-morada">
-          Conocé el evento →
-        </span>
       </article>
       <p className="text-[13px] text-franja-muted">
         Así se verá la publicación. No es visible hasta que confirmes.

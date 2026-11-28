@@ -28,8 +28,10 @@ export function EventoEditorPage() {
     applyForm,
     dataState,
     busy,
-    uploadingImage,
-    uploadError,
+    imageError,
+    saveError,
+    imagePreviewUrl,
+    hasImage,
     lastSavedLabel,
     confirmOpen,
     showSuccess,
@@ -43,6 +45,8 @@ export function EventoEditorPage() {
     handlePublishClick,
     handlePublishConfirm,
     handleImageChange,
+    handleClearImage,
+    handleCancelNavigate,
     retry,
   } = useEventEditor();
 
@@ -189,9 +193,9 @@ export function EventoEditorPage() {
                     <span className="text-sm font-bold text-franja-dark">
                       Imagen destacada *
                     </span>
-                    {form.imagenUrl ? (
+                    {imagePreviewUrl ? (
                       <img
-                        src={form.imagenUrl}
+                        src={imagePreviewUrl}
                         alt=""
                         className="mt-2 h-[200px] w-full rounded-lg object-cover"
                       />
@@ -200,29 +204,51 @@ export function EventoEditorPage() {
                         Sin imagen seleccionada
                       </div>
                     )}
-                    <label className="mt-3 inline-flex h-12 cursor-pointer items-center justify-center rounded-lg border border-franja-border bg-white px-5 text-sm font-bold text-franja-morada hover:bg-franja-surface">
-                      {uploadingImage ? "Subiendo…" : "Cambiar imagen"}
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        className="sr-only"
-                        disabled={busy || uploadingImage}
-                        onChange={(event) =>
-                          handleImageChange(event.target.files?.[0] ?? null)
-                        }
-                      />
-                    </label>
+                    <div className="mt-3 flex flex-wrap gap-3">
+                      <label className="inline-flex h-12 cursor-pointer items-center justify-center rounded-lg border border-franja-border bg-white px-5 text-sm font-bold text-franja-morada hover:bg-franja-surface">
+                        {hasImage ? "Cambiar imagen" : "Elegir imagen"}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          className="sr-only"
+                          disabled={busy}
+                          onChange={(event) =>
+                            handleImageChange(event.target.files?.[0] ?? null)
+                          }
+                        />
+                      </label>
+                      {hasImage ? (
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={handleClearImage}
+                          className="inline-flex h-12 items-center justify-center rounded-lg border border-franja-border bg-white px-5 text-sm font-bold text-franja-morada hover:bg-franja-surface disabled:opacity-50"
+                        >
+                          Quitar imagen
+                        </button>
+                      ) : null}
+                    </div>
                     <p className="mt-2 text-[13px] text-franja-muted">
                       JPG, PNG o WEBP · Hasta 2 MB
                       <br />
                       Recomendado: 1200 × 700 px
+                      <br />
+                      La imagen se sube al guardar o publicar.
                     </p>
-                    {uploadError ? (
+                    {imageError ? (
                       <p
                         className="mt-2 text-sm text-franja-error"
                         role="alert"
                       >
-                        {uploadError}
+                        {imageError}
+                      </p>
+                    ) : null}
+                    {saveError ? (
+                      <p
+                        className="mt-2 text-sm text-franja-error"
+                        role="alert"
+                      >
+                        {saveError}
                       </p>
                     ) : null}
                   </div>
@@ -287,7 +313,7 @@ export function EventoEditorPage() {
                     onClick={handlePublishClick}
                     className="inline-flex h-12 items-center justify-center rounded-lg bg-franja-morada px-5 text-sm font-bold text-white transition-colors hover:bg-franja-morada/90 disabled:opacity-50"
                   >
-                    Publicar evento
+                    {busy ? "Guardando…" : "Publicar evento"}
                   </button>
                   <button
                     type="button"
@@ -295,12 +321,13 @@ export function EventoEditorPage() {
                     onClick={handleSaveDraft}
                     className="inline-flex h-12 items-center justify-center rounded-lg border border-franja-border bg-white px-5 text-sm font-bold text-franja-morada transition-colors hover:bg-franja-surface disabled:opacity-50"
                   >
-                    Guardar borrador
+                    {busy ? "Guardando…" : "Guardar borrador"}
                   </button>
                 </div>
 
                 <Link
                   to="/eventos"
+                  onClick={handleCancelNavigate}
                   className="mt-4 inline-block text-sm font-bold text-franja-morada"
                 >
                   Cancelar y volver al listado
@@ -314,6 +341,7 @@ export function EventoEditorPage() {
                 horaInicio={form.horaInicio}
                 horaFin={form.horaFin}
                 descripcion={form.descripcion}
+                imagenUrl={imagePreviewUrl}
               />
             </div>
           </>
