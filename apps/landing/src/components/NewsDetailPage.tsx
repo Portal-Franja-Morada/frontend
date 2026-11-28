@@ -8,6 +8,7 @@ import { usePostDetail } from "../hooks/use-post-detail";
 import { Footer } from "./Footer";
 import { GoldCorner } from "./GoldCorner";
 import { Header } from "./Header";
+import { OptimizedImage } from "./OptimizedImage";
 import { PostMarkdown } from "./PostMarkdown";
 
 export function NewsDetailPage() {
@@ -91,12 +92,12 @@ export function NewsDetailPage() {
                   {post.publishedAtLabel}
                 </p>
 
-                <img
+                <OptimizedImage
                   src={post.image}
                   alt={post.imageAlt}
-                  className="h-[220px] w-full rounded-xl object-cover lg:h-[400px]"
-                  width={960}
-                  height={400}
+                  layout="detail"
+                  loading="eager"
+                  className="aspect-[960/400] h-[220px] w-full rounded-xl object-cover lg:h-[400px]"
                 />
 
                 <p className="text-card-title font-bold text-franja-dark">

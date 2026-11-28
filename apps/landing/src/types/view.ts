@@ -6,6 +6,8 @@ export type AgendaEvent = {
   time: string;
   location: string;
   href: string;
+  image: string;
+  imageAlt: string;
 };
 
 export type NewsItem = {
@@ -26,6 +28,8 @@ export type EventListItem = {
   location: string;
   href: string;
   inicio: string;
+  image: string;
+  imageAlt: string;
 };
 
 export type HomeViewModel = {

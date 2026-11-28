@@ -1,5 +1,6 @@
 import { createElement } from "react";
 import type { NewsItem } from "../types/view";
+import { OptimizedImage } from "./OptimizedImage";
 
 type NewsCardProps = {
   item: NewsItem;
@@ -9,13 +10,11 @@ type NewsCardProps = {
 export function NewsCard({ item, titleTag = "h3" }: NewsCardProps) {
   return (
     <article className="flex flex-col overflow-hidden rounded-xl border border-franja-border bg-white">
-      <img
+      <OptimizedImage
         src={item.image}
         alt={item.imageAlt}
-        className="h-[190px] w-full object-cover lg:h-[200px]"
-        width={409}
-        height={200}
-        loading="lazy"
+        layout="card"
+        className="aspect-[409/200] h-[190px] w-full object-cover lg:h-[200px]"
       />
       <div className="flex flex-col gap-3 p-[22px]">
         <p className="text-xs font-bold text-franja-morada">{item.category}</p>
