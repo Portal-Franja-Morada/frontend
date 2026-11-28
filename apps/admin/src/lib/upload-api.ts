@@ -5,6 +5,8 @@ import { getApiBaseUrl, readApiError } from "./api";
 const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
+export type UploadTipo = "novedad" | "evento";
+
 function isUploadResult(data: unknown): data is UploadResult {
   if (!data || typeof data !== "object") {
     return false;
@@ -23,7 +25,10 @@ export function validateImageFile(file: File): string | null {
   return null;
 }
 
-export async function uploadImage(file: File): Promise<UploadResult> {
+export async function uploadImage(
+  file: File,
+  tipo: UploadTipo,
+): Promise<UploadResult> {
   const validation = validateImageFile(file);
   if (validation) {
     throw new Error(validation);
@@ -39,6 +44,7 @@ export async function uploadImage(file: File): Promise<UploadResult> {
 
   try {
     const body = new FormData();
+    body.append("tipo", tipo);
     body.append("file", file);
 
     const response = await fetch(`${baseUrl}/admin/uploads`, {

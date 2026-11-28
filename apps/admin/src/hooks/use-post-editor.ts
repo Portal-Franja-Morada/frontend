@@ -239,7 +239,7 @@ export function usePostEditor() {
       setUploadingImage(true);
       void (async () => {
         try {
-          const result = await uploadImage(file);
+          const result = await uploadImage(file, "novedad");
           applyForm({
             imagenUrl: result.url,
             imagenPublicId: result.publicId,
