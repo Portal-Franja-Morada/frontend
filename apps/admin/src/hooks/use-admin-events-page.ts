@@ -180,6 +180,11 @@ export function useAdminEventsPage() {
 
   const selectValue = useMemo(() => estadoFilter ?? "todos", [estadoFilter]);
 
+  const removeEvent = useCallback((id: string) => {
+    setEvents((current) => current.filter((event) => event.id !== id));
+    setTotal((current) => Math.max(0, current - 1));
+  }, []);
+
   return {
     events,
     stats,
@@ -195,5 +200,7 @@ export function useAdminEventsPage() {
     setEstadoFilter,
     goToPage,
     retry,
+    refresh: load,
+    removeEvent,
   };
 }

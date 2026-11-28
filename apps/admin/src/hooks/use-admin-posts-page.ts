@@ -180,6 +180,11 @@ export function useAdminPostsPage() {
 
   const selectValue = useMemo(() => estadoFilter ?? "todos", [estadoFilter]);
 
+  const removePost = useCallback((id: string) => {
+    setPosts((current) => current.filter((post) => post.id !== id));
+    setTotal((current) => Math.max(0, current - 1));
+  }, []);
+
   return {
     posts,
     stats,
@@ -195,5 +200,7 @@ export function useAdminPostsPage() {
     setEstadoFilter,
     goToPage,
     retry,
+    refresh: load,
+    removePost,
   };
 }

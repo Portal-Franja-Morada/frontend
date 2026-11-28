@@ -122,6 +122,16 @@ export async function updateEvent(
   return data;
 }
 
+export async function deleteEvent(id: string): Promise<void> {
+  const response = await apiFetch(`/admin/events/${id}`, {
+    method: "DELETE",
+  });
+  if (response.status === 204) {
+    return;
+  }
+  throw await readApiError(response);
+}
+
 export async function publishEvent(id: string): Promise<AdminEvent> {
   const response = await apiFetch(`/admin/events/${id}/publicar`, {
     method: "POST",
