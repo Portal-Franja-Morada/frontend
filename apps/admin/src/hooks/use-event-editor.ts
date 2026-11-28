@@ -275,7 +275,7 @@ export function useEventEditor() {
       setUploadingImage(true);
       void (async () => {
         try {
-          const result = await uploadImage(file);
+          const result = await uploadImage(file, "evento");
           applyForm({
             imagenUrl: result.url,
             imagenPublicId: result.publicId,
